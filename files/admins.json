@@ -1,0 +1,19 @@
+{
+  "markosuljak":{
+    "username":"markosuljak",
+    "password":"123",
+    "firstName":"Marko",
+    "lastName":"Suljak",
+    "gender":"MALE",
+    "birthday":"Feb 8, 1999 12:00:00 AM",
+    "deleted":false
+  },
+  "stefan":{
+    "username":"stefan",
+    "password":"123",
+    "firstName":"Stefan",
+    "lastName":"Ljubovic",
+    "birthday":"Apr 23, 1999 12:00:00 AM",
+    "deleted":false
+  }
+}
