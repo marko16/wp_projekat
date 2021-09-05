@@ -1,0 +1,22 @@
+{
+  "silver": {
+    "typeName": "SILVER",
+    "discount": 20.0,
+    "pointThreshold": 50
+  },
+  "regular": {
+    "typeName": "REGULAR",
+    "discount": 0.0,
+    "pointThreshold": 0
+  },
+  "bronze": {
+    "typeName": "BRONZE",
+    "discount": 10.0,
+    "pointThreshold": 25
+  },
+  "gold": {
+    "typeName": "GOLD",
+    "discount": 30.0,
+    "pointThreshold": 90
+  }
+}

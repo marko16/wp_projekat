@@ -6,9 +6,7 @@ import static spark.Spark.post;
 import static spark.Spark.staticFiles;
 
 import controller.UserController;
-import dao.AdminDAO;
-import dao.CustomerDAO;
-import dao.SalesmanDAO;
+import dao.*;
 import spark.Request;
 import spark.Session;
 import java.io.File;
@@ -24,6 +22,8 @@ public class WebApplication {
     private static CustomerDAO customerDAO = new CustomerDAO();
     private static SalesmanDAO salesmanDAO = new SalesmanDAO();
     private static AdminDAO adminDAO = new AdminDAO();
+    private static LocationDAO locationDAO = new LocationDAO();
+    private static EventDAO eventDAO = new EventDAO();
 
     public static void main(String[] args) throws Exception {
         port(8080);
