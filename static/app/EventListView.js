@@ -3,17 +3,26 @@ Vue.component("EventListView", {
 
     data() {
         return {
-            events: []
+            events: [],
         }
     },
 
-    created() {
-        this.events = [1,2,3,4,5]
-        this.events.push({eventType:"event1"})
+    // created() {
+    //     this.events = [1,2,3,4,5]
+    //     this.events.push({eventType:"event1"})
+    // },
+
+    mounted() {
+        axios.get("/events").then(
+            response => {
+                this.events = response.data;
+            })
     },
 
     methods: {
-
+        onSeeMore(event) {
+            this.chosenEvent = event;
+        }
     },
 
     template: `
@@ -32,7 +41,7 @@ Vue.component("EventListView", {
 <!--                </div>-->
 <!--            </div>-->
 
-        <EventCard :event="e" />
+        <EventCard :event="e"/>
 <!--    <div id="container" class="event-container">    -->
 <!--    -->
 <!--    <div class="product-details">-->
@@ -89,6 +98,8 @@ Vue.component("EventListView", {
 
 <!--</div>-->
         </div>
+        
+     
     </div>
     
     `

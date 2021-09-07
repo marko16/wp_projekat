@@ -1,10 +1,10 @@
 package model;
 
 import javax.json.bind.annotation.JsonbDateFormat;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Event {
+    private int id;
     private String name;
     private String eventType;
     private int capacity;
@@ -17,6 +17,14 @@ public class Event {
     private String poster;
 
     public Event() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

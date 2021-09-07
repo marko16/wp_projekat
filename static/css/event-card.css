@@ -78,6 +78,7 @@
 }
 
 .event-title {
+    cursor: pointer;
     height: 1.5rem;
     text-indent: 1rem;
 }

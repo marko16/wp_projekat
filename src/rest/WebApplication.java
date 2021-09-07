@@ -76,6 +76,14 @@ public class WebApplication {
             return gson.toJson(response);
 
         });
+
+        get("/events", (req, res) -> {
+           return gson.toJson(eventDAO.getAvailableEvents());
+        });
+
+        get("/event", (req, res) -> {
+            return gson.toJson(eventDAO.findOne(Integer.parseInt(req.queryParams("id"))));
+        });
     }
 
 }

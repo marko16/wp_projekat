@@ -3,13 +3,28 @@ Vue.component("EventCard", {
         event: Object
     },
 
-    created() {
-        console.log(event);
-        this.event = {
-            name: "event1",
-            eventType: "tip1",
-            description: "Nunc tincidunt volutpat hendrerit. Praesent lacinia arcu in dui imperdiet, ac mollis neque tristique. Maecenas id neque non sem feugiat efficitur. Fusce suscipit turpis nisi, at pretium dui commodo varius. Sed hendrerit et leo a rhoncus. Vivamus lobortis blandit turpis, non aliquet elit dignissim et. Integer quis iaculis ante."
-        }
+    // created() {
+    //     console.log(event);
+    //     this.event = {
+    //         name: "event1",
+    //         eventType: "tip1",
+    //         description: "Nunc tincidunt volutpat hendrerit. Praesent lacinia arcu in dui imperdiet, ac mollis neque tristique. Maecenas id neque non sem feugiat efficitur. Fusce suscipit turpis nisi, at pretium dui commodo varius. Sed hendrerit et leo a rhoncus. Vivamus lobortis blandit turpis, non aliquet elit dignissim et. Integer quis iaculis ante."
+    //     }
+    // },
+
+    methods: {
+        parseLocation() {
+            return `${this.event.location.street} ${this.event.location.number}, ${this.event.location.city} ${this.event.location.zipcode}`
+        },
+        redirectEvent() {
+
+            this.router.push(`/${this.event.id}`)
+        },
+        seeMore() {
+            this.$emit("seeMoreClicked", this.event);
+            this.$router.push({path: "/event/" + this.event.id, name: "event", params: {id: this.event.id}});
+        },
+
     },
 
     template:
@@ -18,8 +33,9 @@ Vue.component("EventCard", {
     <div id="container" class="event-container">    
     
     <div class="product-details">
-        
-    <h1 class="event-title">CHRISTMAS TREE</h1>
+    <a @click="seeMore()">    
+    <h1 class="event-title">{{event.name}}</h1>
+    </a>
     <div class="col rate">
           <input type="radio" id="star52" name="rate" value="5"/>
           <label for="star52" title="text"></label>
@@ -35,9 +51,9 @@ Vue.component("EventCard", {
         
         
     <ul class="information">
-        <li><strong>Event type : </strong> {{this.event.eventType}} </li>
-        <li><strong>Start : </strong>Olive green</li>
-        <li><strong>Average rating : </strong>balls and bells</li>
+        <li><strong>Event type : </strong> {{event.eventType}} </li>
+        <li><strong>Start : </strong>{{event.startTime}}</li>
+        <li><strong>Average rating : </strong>4.0</li>
     </ul>    
 <!--    <p class="information">" Let's spread the joy , here is Christmas , the most awaited day of the year.Christmas Tree is what one need the most. Here is the correct tree which will enhance your Christmas.</p>-->
 
@@ -45,18 +61,16 @@ Vue.component("EventCard", {
     <div class="control">
     
     <button class="btn">
-        <span class="price">$250</span>
+        <span class="price">{{event.regularPrice}}</span>
         <span class="shopping-cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></span>
         <span class="buy">Get now</span>
-    </button>
-    
+    </button>    
    
     
 </div>
 
 
-       <h5 class="address"><i class="fa fa-map-marker location-pin" aria-hidden="true"></i>XIII Vojvodjanske Brigade 106, Zrenjanin
-       </h5>      
+       <h5 class="address"><i class="fa fa-map-marker location-pin" aria-hidden="true"></i>{{this.parseLocation()}}</h5>      
 </div>
     
 <div class="product-image">
@@ -72,4 +86,4 @@ Vue.component("EventCard", {
 </div>
 </div>
     `
-})
+});

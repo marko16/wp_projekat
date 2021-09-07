@@ -7,7 +7,7 @@ const router = new VueRouter({
     routes: [
         { path: '/login', component: Login },
         { path: '/events', component: EventListView },
-        { path: '/event/:id', component: EventView }
+        { path: '/event/:id', name: 'event', component: EventView, props: true }
     ]
 });
 
