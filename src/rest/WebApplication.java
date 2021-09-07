@@ -7,6 +7,8 @@ import static spark.Spark.staticFiles;
 
 import controller.UserController;
 import dao.*;
+import model.Customer;
+import model.Event;
 import spark.Request;
 import spark.Session;
 import java.io.File;
@@ -24,6 +26,7 @@ public class WebApplication {
     private static AdminDAO adminDAO = new AdminDAO();
     private static LocationDAO locationDAO = new LocationDAO();
     private static EventDAO eventDAO = new EventDAO();
+    private static TicketDAO ticketDAO = new TicketDAO();
 
     public static void main(String[] args) throws Exception {
         port(8080);
@@ -40,8 +43,8 @@ public class WebApplication {
 
             String username = " ";
             ArrayList<String> response = new ArrayList<String>();
-            if(customerDAO.findOne(uname, lozinka) != null) {
-                if(!customerDAO.findOne(uname,lozinka).isBlocked()) {
+            if(customerDAO.login(uname, lozinka) != null) {
+                if(!customerDAO.login(uname,lozinka).isBlocked()) {
                     username = uname;
                     response.add(username);
                     response.add("customer");
@@ -52,13 +55,13 @@ public class WebApplication {
             }
             else
             {
-                if(adminDAO.findOne(uname, lozinka) != null) {
+                if(adminDAO.login(uname, lozinka) != null) {
                     username = uname;
                     response.add(username);
                     response.add("admin");
                 }else {
-                    if(salesmanDAO.findOne(uname, lozinka) != null) {
-                        if(!salesmanDAO.findOne(uname, lozinka).isBlocked()) {
+                    if(salesmanDAO.login(uname, lozinka) != null) {
+                        if(!salesmanDAO.login(uname, lozinka).isBlocked()) {
                             username = uname;
                             response.add(username);
                             response.add("salesman");
@@ -83,6 +86,20 @@ public class WebApplication {
 
         get("/event", (req, res) -> {
             return gson.toJson(eventDAO.findOne(Integer.parseInt(req.queryParams("id"))));
+        });
+
+        post("/reserve", (req, res) -> {
+            String username = req.queryParams("username");
+            String eventId = req.queryParams("eventId");
+            String amount = req.queryParams("amount");
+            String ticketType = req.queryParams("ticketType");
+
+            Customer customer = customerDAO.findOne(username);
+            Event event = eventDAO.findOne(Integer.parseInt(eventId));
+
+            ArrayList<String> tickets = ticketDAO.createOrder(username, eventId, amount, ticketType, event.getRegularPrice());
+            customerDAO.addPoints(tickets, ticketType, amount, event.getRegularPrice(), username);
+            return true;
         });
     }
 

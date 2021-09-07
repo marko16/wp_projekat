@@ -3,9 +3,9 @@ package model;
 import java.util.ArrayList;
 
 public class Customer extends User {
-    private ArrayList<Ticket> tickets;
+    private ArrayList<String> tickets;
     private int points;
-    private CustomerType customerType;
+    private String customerType;
     private boolean blocked;
     private boolean sus;
 
@@ -25,11 +25,11 @@ public class Customer extends User {
         this.sus = sus;
     }
 
-    public ArrayList<Ticket> getTickets() {
+    public ArrayList<String> getTickets() {
         return tickets;
     }
 
-    public void setTickets(ArrayList<Ticket> tickets) {
+    public void setTickets(ArrayList<String> tickets) {
         this.tickets = tickets;
     }
 
@@ -41,11 +41,11 @@ public class Customer extends User {
         this.points = points;
     }
 
-    public CustomerType getCustomerType() {
+    public String getCustomerType() {
         return customerType;
     }
 
-    public void setCustomerType(CustomerType customerType) {
+    public void setCustomerType(String customerType) {
         this.customerType = customerType;
     }
 }

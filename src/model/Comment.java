@@ -1,24 +1,60 @@
 package model;
 
 public class Comment {
-    private Customer customer;
-    private Event event;
+    private int id;
+    private String customer;
+    private int event;
     private String text;
     private short rating;
+    private int approved;
+    private boolean deleted;
+    private String buyer;
 
-    public Customer getCustomer() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getApproved() {
+        return approved;
+    }
+
+    public void setApproved(int approved) {
+        this.approved = approved;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public String getBuyer() {
+        return buyer;
+    }
+
+    public void setBuyer(String buyer) {
+        this.buyer = buyer;
+    }
+
+    public String getCustomer() {
         return customer;
     }
 
-    public void setCustomer(Customer customer) {
+    public void setCustomer(String customer) {
         this.customer = customer;
     }
 
-    public Event getEvent() {
+    public int getEvent() {
         return event;
     }
 
-    public void setEvent(Event event) {
+    public void setEvent(int event) {
         this.event = event;
     }
 

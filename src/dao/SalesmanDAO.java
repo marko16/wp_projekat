@@ -67,7 +67,7 @@ public class SalesmanDAO {
         this.salesmen = gson.fromJson(br, token);
     }
 
-    public Salesman findOne(String username, String password) {
+    public Salesman login(String username, String password) {
 //        for (Map.Entry<String, Salesman> entry : salesmen.entrySet()) {
 //            if(entry.getValue().getUsername().equals(username) && entry.getValue().getPassword().equals(password)) {
 //                return entry.getValue();

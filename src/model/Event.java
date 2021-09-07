@@ -8,6 +8,7 @@ public class Event {
     private String name;
     private String eventType;
     private int capacity;
+    private int availableTickets;
 
     @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
     private Date startTime;
@@ -17,6 +18,14 @@ public class Event {
     private String poster;
 
     public Event() {
+    }
+
+    public int getAvailableTickets() {
+        return availableTickets;
+    }
+
+    public void setAvailableTickets(int availableTickets) {
+        this.availableTickets = availableTickets;
     }
 
     public int getId() {

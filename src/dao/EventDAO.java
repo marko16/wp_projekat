@@ -37,6 +37,7 @@ public class EventDAO {
         e1.setId(1);
         e1.setActive(true);
         e1.setCapacity(230);
+        e1.setAvailableTickets(33);
         e1.setLocation(locationDAO.locations.get(1));
         e1.setRegularPrice(300);
         e1.setName("Grad kulture");
@@ -47,6 +48,7 @@ public class EventDAO {
         e2.setId(2);
         e2.setActive(true);
         e2.setCapacity(210);
+        e2.setAvailableTickets(10);
         e2.setLocation(locationDAO.locations.get(2));
         e2.setRegularPrice(250);
         e2.setName("Koncert Rade Manojlovic");
@@ -74,6 +76,6 @@ public class EventDAO {
     }
 
     public Event findOne(Integer id) {
-        return events.get(id);
+        return events.getOrDefault(id, null);
     }
 }

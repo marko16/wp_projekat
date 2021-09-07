@@ -88,13 +88,13 @@ Vue.component('EventView', {
                     <div class="mb-2">
                         <h5>Event type: {{event.eventType}}</h5> 
                     </div>
-                    <h5 class="mb-2">Capacity: {{event.capacity}}, Available 200</h5>
+                    <h5 class="mb-2">Capacity: {{event.capacity}}, Available: {{event.availableTickets}}</h5>
                     <h5 class="mb-2">Start date and time: {{event.startTime}}</h5>
                     <p>Status: {{isActive()}}</p>
                     <a type="button" @click="loadMap()" style="cursor: pointer; position: relative; right: 20px" data-toggle="modal" data-target="#map-modal">
                         <h5 class="address"><i class="fa fa-map-marker location-pin" aria-hidden="true"></i>{{parseLocation()}}</h5></a>
                     <div class="d-flex">
-                        <input class="form-control text-center me-3 mr-2" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
+                        <input class="form-control text-center me-3 mr-2" id="inputQuantity" type="number" value="1" min="1" style="max-width: 65px" />
                         <button class="btn btn-outline-dark flex-shrink-0" type="button">
                             <i class="bi-cart-fill me-1"></i>
                             Purchase
@@ -120,7 +120,6 @@ Vue.component('EventView', {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
           </div>
         </div>
       </div>

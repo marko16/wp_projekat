@@ -31,7 +31,7 @@ public class AdminDAO {
         this.admins = gson.fromJson(br, token);
     }
 
-    public Admin findOne(String username, String password) {
+    public Admin login(String username, String password) {
         for (Map.Entry<String, Admin> entry : admins.entrySet()) {
             if(entry.getValue().getUsername().equals(username) && entry.getValue().getPassword().equals(password)) {
                 return entry.getValue();
