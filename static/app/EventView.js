@@ -50,7 +50,10 @@ Vue.component('EventView', {
 
             axios.post("/reserve", {}, { params: { username: "c1", eventId: this.id, ticketType: this.ticketType, amount: this.amount}})
                 .then(response => {
-                    alert("Tickets purchased successfully!")
+                    if(response.data)
+                        alert("Tickets purchased successfully!")
+                    else
+                        alert("Not enough available tickets!")
                 })
         },
 

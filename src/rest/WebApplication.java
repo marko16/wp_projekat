@@ -97,8 +97,13 @@ public class WebApplication {
             Customer customer = customerDAO.findOne(username);
             Event event = eventDAO.findOne(Integer.parseInt(eventId));
 
+            if(event.getAvailableTickets() < Integer.parseInt(amount)) {
+                return false;
+            }
+
             ArrayList<String> tickets = ticketDAO.createOrder(username, eventId, amount, ticketType, event.getRegularPrice());
             customerDAO.addPoints(tickets, ticketType, amount, event.getRegularPrice(), username);
+            eventDAO.adjustCapacity(Integer.parseInt(amount), event.getId());
             return true;
         });
     }

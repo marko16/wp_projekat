@@ -78,4 +78,15 @@ public class EventDAO {
     public Event findOne(Integer id) {
         return events.getOrDefault(id, null);
     }
+
+    public void adjustCapacity(int amount, int eventId) {
+        Event event = this.findOne(eventId);
+        event.setAvailableTickets(event.getAvailableTickets() - amount);
+        try {
+            writeAll();
+            // PROEMNI IME FJE
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
