@@ -43,6 +43,7 @@ public class EventDAO {
         e1.setName("Grad kulture");
         e1.setStartTime(new Date(121, Calendar.SEPTEMBER, 22));
         e1.setEventType("Cultural event");
+        e1.setPoster("images/e1.jfif");
 
         Event e2 = new Event();
         e2.setId(2);
@@ -54,6 +55,7 @@ public class EventDAO {
         e2.setName("Koncert Rade Manojlovic");
         e2.setStartTime(new Date(121, Calendar.SEPTEMBER, 15));
         e2.setEventType("Concert");
+        e2.setPoster("images/e2.jfif");
 
         events.put(1, e1);
         events.put(2, e2);

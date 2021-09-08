@@ -3,6 +3,14 @@ Vue.component("EventCard", {
         event: Object
     },
 
+    data() {
+        return {
+            amount:1,
+            ticketType: "REGULAR",
+            entirePrice: ""
+        }
+    },
+
     // created() {
     //     console.log(event);
     //     this.event = {
@@ -13,6 +21,24 @@ Vue.component("EventCard", {
     // },
 
     methods: {
+        calcPrice(coef) {
+            console.log(this.event)
+            this.entirePrice = this.amount * this.event.regularPrice * coef;
+            if(coef === 1) this.ticketType = "REGULAR"
+            else if(coef === 2) this.ticketType = "FANPIT"
+            else this.ticketType = "VIP"
+        },
+        purchase() {
+            const username = window.localStorage.getItem("username");
+
+            axios.post("/reserve", {}, { params: { username: "c1", eventId: this.event.id, ticketType: this.ticketType, amount: this.amount}})
+                .then(response => {
+                    if(response.data)
+                        alert("Tickets purchased successfully!")
+                    else
+                        alert("Not enough available tickets!")
+                })
+        },
         parseLocation() {
             return `${this.event.location.street} ${this.event.location.number}, ${this.event.location.city} ${this.event.location.zipcode}`
         },
@@ -34,20 +60,9 @@ Vue.component("EventCard", {
     
     <div class="product-details">
     <a @click="seeMore()">    
-    <h1 class="event-title">{{event.name}}</h1>
+    <h1 class="event-title mb-5">{{event.name}}</h1>
     </a>
-    <div class="col rate">
-          <input type="radio" id="star52" name="rate" value="5"/>
-          <label for="star52" title="text"></label>
-          <input type="radio" id="star42" name="rate" value="4"/>
-          <label for="star42" title="text"></label>
-          <input type="radio" id="star32" name="rate" value="3"/>
-          <label for="star32" title="text"></label>
-          <input type="radio" id="star22" name="rate" value="2"/>
-          <label for="star22" title="text"></label>
-          <input type="radio" id="star12" name="rate" value="1"/>
-          <label for="star12" title="text"></label> 
-    </div>
+    
         
         
     <ul class="information">
@@ -63,7 +78,7 @@ Vue.component("EventCard", {
     <button class="btn">
         <span class="price">{{event.regularPrice}}</span>
         <span class="shopping-cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></span>
-        <span class="buy">Get now</span>
+        <span class="buy" data-toggle="modal" data-target="#purchase-modal" @click="calcPrice(1)">Get now</span>
     </button>    
    
     
@@ -75,7 +90,7 @@ Vue.component("EventCard", {
     
 <div class="product-image">
     
-    <img src="https://citypal.me/wp-content/uploads/2016/04/01-e1462017909580.jpg" alt="">
+    <img :src="event.poster" alt="">
     
 
 <div class="info">
@@ -84,6 +99,35 @@ Vue.component("EventCard", {
 </div>
 
 </div>
+
+
+<div id="purchase-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Purchase tickets</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5 class="mb-3">Price: {{entirePrice}}</h5>
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <button type="button" class="btn btn-secondary" @click="calcPrice(1)">REGULAR</button>
+          <button type="button" class="btn btn-info" @click="calcPrice(2)">FANPIT</button>
+          <button type="button" class="btn btn-dark" @click="calcPrice(4)">VIP</button>
+        </div>
+      
+
+</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" @click="purchase()">Purchase</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+            </div>
+
+    </div>
+  </div>
 </div>
     `
 });

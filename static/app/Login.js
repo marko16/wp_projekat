@@ -10,7 +10,7 @@ Vue.component("Login", {
           <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="" v-model="password">
           
           <button class="btn btn-lg btn-primary btn-block mt-4" type="button" @click="login">Log in</button>
-          <button class="btn btn-lg btn-outline-primary btn-block mt-2" type="button">Sign up</button>
+          <button class="btn btn-lg btn-outline-primary btn-block mt-2" type="button" @click="register()">Sign up</button>
         </form>
     </div>
     `,
@@ -23,6 +23,9 @@ Vue.component("Login", {
     },
 
     methods: {
+        register() {
+            this.$router.push("/reg");
+        },
         login() {
             axios.post('/login', {}, {
                 params: {username: this.username, password: this.password}

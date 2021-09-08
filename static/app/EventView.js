@@ -32,7 +32,6 @@ Vue.component('EventView', {
                 then(response => {
                     this.event = response.data
                     this.loadMap();
-
             })
         },
         isActive() {
@@ -102,9 +101,21 @@ Vue.component('EventView', {
     <div>
         <div class="container px-4 px-lg-5 my-5">
             <div class="row gx-4 gx-lg-5 align-items-center">
-                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="https://citypal.me/wp-content/uploads/2016/04/01-e1462017909580.jpg" alt="..." /></div>
+                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" :src="event.poster" alt="..." /></div>
                 <div class="col-md-6">
-                    <div class="small mb-1">Average event rating: 3.6</div>
+                    <div class="small mb-1 average-rating">Average event rating: 3.6</div>
+                    <div class="col rate">
+                          <input type="radio" id="star52" name="rate" value="5"/>
+                          <label for="star52" title="text"></label>
+                          <input type="radio" id="star42" name="rate" value="4"/>
+                          <label for="star42" title="text"></label>
+                          <input type="radio" id="star32" name="rate" value="3"/>
+                          <label for="star32" title="text"></label>
+                          <input type="radio" id="star22" name="rate" value="2"/>
+                          <label for="star22" title="text"></label>
+                          <input type="radio" id="star12" name="rate" value="1"/>
+                          <label for="star12" title="text"></label> 
+                    </div>
                     <h1 class="display-5 fw-bolder">{{event.name}}</h1>
                     <div class="fs-3 mb-3">
                         <span class="text-decoration-line-through">Ordinary card price: {{event.regularPrice}}</span>

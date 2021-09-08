@@ -5,6 +5,7 @@ import static spark.Spark.port;
 import static spark.Spark.post;
 import static spark.Spark.staticFiles;
 
+import com.google.gson.GsonBuilder;
 import controller.UserController;
 import dao.*;
 import model.Customer;
@@ -104,6 +105,14 @@ public class WebApplication {
             ArrayList<String> tickets = ticketDAO.createOrder(username, eventId, amount, ticketType, event.getRegularPrice());
             customerDAO.addPoints(tickets, ticketType, amount, event.getRegularPrice(), username);
             eventDAO.adjustCapacity(Integer.parseInt(amount), event.getId());
+            return true;
+        });
+
+        post("/registration", (req, res) -> {
+            Gson gsonReg = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+
+            Customer customer = gsonReg.fromJson(req.body(), Customer.class);
+            customerDAO.addCustomer(customer);
             return true;
         });
     }

@@ -2,7 +2,6 @@ package dao;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import model.Admin;
 import model.Customer;
 import model.CustomerType;
 import model.Gender;
@@ -117,6 +116,21 @@ public class CustomerDAO {
         } else if(c.getCustomerType().equals("SILVER") && c.getPoints() >= this.customerTypes.get("GOLD").getPointThreshold()) {
             c.setCustomerType("GOLD");
         }
+
+        try {
+            this.writeAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addCustomer(Customer customer) {
+        customer.setPoints(0);
+        customer.setBlocked(false);
+        customer.setSus(false);
+        customer.setTickets(new ArrayList<>());
+        customer.setCustomerType("REGULAR");
+        customers.put(customer.getUsername(), customer);
 
         try {
             this.writeAll();
