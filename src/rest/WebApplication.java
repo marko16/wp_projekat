@@ -38,8 +38,6 @@ public class WebApplication {
 
         get("/test", (req, res) -> "Works");
 
-        post("/auth/login", uc.login());
-
         post("/login", (req, res)-> {
             String uname  = req.queryParams("username");
             String lozinka = req.queryParams("password");
@@ -51,7 +49,7 @@ public class WebApplication {
                     username = uname;
                     response.add(username);
                     response.add("customer");
-                }else {
+                } else {
                     username = "blocked";
                     response.add(username);
                 }
@@ -115,6 +113,14 @@ public class WebApplication {
 
             Customer customer = gsonReg.fromJson(req.body(), Customer.class);
             customerDAO.addCustomer(customer);
+            return true;
+        });
+
+        post("/registrationSalesman", (req, res) -> {
+            Gson gsonReg = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+
+            Salesman salesman = gsonReg.fromJson(req.body(), Salesman.class);
+            salesmanDAO.addSalesman(salesman);
             return true;
         });
 

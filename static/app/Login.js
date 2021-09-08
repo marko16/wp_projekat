@@ -32,7 +32,7 @@ Vue.component("Login", {
             }).then(response => {
                 console.log(response);
                 if (JSON.parse(JSON.stringify(response.data))[0] === " ") {
-                    alert("Wrond username or password");
+                    alert("Wrong username or password");
                 } else if (JSON.parse(JSON.stringify(response.data))[0] === "blocked") {
                     alert("Your account is blocked");
                 } else {

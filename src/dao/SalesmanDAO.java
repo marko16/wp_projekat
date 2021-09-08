@@ -8,9 +8,7 @@ import model.Salesman;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 public class SalesmanDAO {
     private HashMap<String, Salesman> salesmen;
@@ -62,17 +60,16 @@ public class SalesmanDAO {
 
     public void loadAll() throws FileNotFoundException {
         Gson gson = new Gson();
-        Type token = new TypeToken<HashMap<String, Customer>>(){}.getType();
+        Type token = new TypeToken<HashMap<String, Salesman>>(){}.getType();
         BufferedReader br = new BufferedReader(new FileReader("files/salesmen.json"));
         this.salesmen = gson.fromJson(br, token);
     }
 
     public Salesman login(String username, String password) {
-//        for (Map.Entry<String, Salesman> entry : salesmen.entrySet()) {
-//            if(entry.getValue().getUsername().equals(username) && entry.getValue().getPassword().equals(password)) {
-//                return entry.getValue();
-//            }
-//        }
+        Salesman salesman = salesmen.getOrDefault(username, null);
+        if(salesman != null && salesman.getPassword().equals(password)) {
+            return salesman;
+        }
         return null;
     }
 
@@ -80,4 +77,15 @@ public class SalesmanDAO {
         return this.salesmen.getOrDefault(username, null);
     }
 
+    public void addSalesman(Salesman salesman) {
+        salesman.setBlocked(false);
+
+        salesmen.put(salesman.getUsername(), salesman);
+
+        try {
+            this.writeAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -82,11 +82,11 @@ public class CustomerDAO {
     }
 
     public Customer login(String username, String password) {
-//        for (Map.Entry<String, Customer> entry : customers.entrySet()) {
-//            if(entry.getValue().getUsername().equals(username) && entry.getValue().getPassword().equals(password)) {
-//                return entry.getValue();
-//            }
-//        }
+        for (Map.Entry<String, Customer> entry : customers.entrySet()) {
+            if(entry.getValue().getUsername().equals(username) && entry.getValue().getPassword().equals(password)) {
+                return entry.getValue();
+            }
+        }
         return null;
     }
 
