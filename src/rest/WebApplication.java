@@ -8,8 +8,10 @@ import static spark.Spark.staticFiles;
 import com.google.gson.GsonBuilder;
 import controller.UserController;
 import dao.*;
+import model.Admin;
 import model.Customer;
 import model.Event;
+import model.Salesman;
 import spark.Request;
 import spark.Session;
 import java.io.File;
@@ -114,6 +116,40 @@ public class WebApplication {
             Customer customer = gsonReg.fromJson(req.body(), Customer.class);
             customerDAO.addCustomer(customer);
             return true;
+        });
+
+        get("/getUser", (req, res) -> {
+            String username = req.queryParams("username");
+            Customer customer = customerDAO.findOne(username);
+            if(customer != null) return gson.toJson(customer);
+            Salesman salesman = salesmanDAO.findOne(username);
+            if(salesman != null) return gson.toJson(salesman);
+
+            return gson.toJson(adminDAO.findOne(username));
+        });
+
+        post("/changePassword", (req, res) -> {
+            String username = req.queryParams("username");
+            String newPassword = req.queryParams("password");
+            Customer customer = customerDAO.findOne(username);
+            if(customer != null) {
+                customer.setPassword(newPassword);
+
+                return true;
+            }
+            Salesman salesman = salesmanDAO.findOne(username);
+            if(salesman != null) {
+                salesman.setPassword(newPassword);
+                return true;
+            }
+            Admin admin = adminDAO.findOne(username);
+            if(admin != null) {
+                System.out.println("usao");
+                admin.setPassword(newPassword);
+                adminDAO.writeAll();
+                return true;
+            }
+            return false;
         });
     }
 

@@ -76,4 +76,8 @@ public class SalesmanDAO {
         return null;
     }
 
+    public Salesman findOne(String username) {
+        return this.salesmen.getOrDefault(username, null);
+    }
+
 }

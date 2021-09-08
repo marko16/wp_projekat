@@ -39,4 +39,21 @@ public class AdminDAO {
         }
         return null;
     }
+
+    public Admin findOne(String username) {
+        return admins.getOrDefault(username, null);
+    }
+
+    public void writeAll() {
+        Gson gson = new Gson();
+        try {
+            FileWriter fw = new FileWriter("files/admins.json");
+            gson.toJson(this.admins, fw);
+            fw.flush();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
