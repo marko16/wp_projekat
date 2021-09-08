@@ -51,7 +51,7 @@ public class TicketDAO {
 
     private void writeAll() throws IOException {
         Gson gson = new Gson();
-        FileWriter fw = new FileWriter("files/karte.json");
+        FileWriter fw = new FileWriter("files/tickets.json");
         gson.toJson(this.tickets, fw);
         fw.flush();
         fw.close();

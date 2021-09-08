@@ -35,7 +35,7 @@ public class CustomerDAO {
 
     private void loadTypes() throws FileNotFoundException {
         Gson gson = new Gson();
-        Type token = new TypeToken<HashMap<String, Customer>>(){}.getType();
+        Type token = new TypeToken<HashMap<String, CustomerType>>(){}.getType();
         BufferedReader br = new BufferedReader(new FileReader("files/customer_types.json"));
         this.customerTypes = gson.fromJson(br, token);
     }
@@ -51,8 +51,10 @@ public class CustomerDAO {
         c1.setSus(false);
         c1.setBirthday(new Date(1998, Calendar.JANUARY, 2));
         c1.setGender(Gender.MALE);
+        c1.setCustomerType("REGULAR");
 
         Customer c2 = new Customer();
+        c2.setCustomerType("REGULAR");
         c2.setFirstName("Toma");
         c2.setLastName("Zdravkovic");
         c2.setGender(Gender.FEMALE);
@@ -104,15 +106,15 @@ public class CustomerDAO {
         }
 
         Customer c = this.findOne(username);
-        c.getTickets().addAll(tickets);
+//        c.getTickets().addAll(tickets);
 
         c.setPoints(c.getPoints() + points);
-
-        if(c.getCustomerType().equals("REGULAR") && c.getPoints() >= customerTypes.get("BRONZE").getPointThreshold()) {
+        System.out.println(this.customerTypes.get("REGULAR"));
+        if(c.getCustomerType().equals("REGULAR") && c.getPoints() >= this.customerTypes.get("BRONZE").getPointThreshold()) {
             c.setCustomerType("BRONZE");
-        } else if(c.getCustomerType().equals("BRONZE") && c.getPoints() >= customerTypes.get("SILVER").getPointThreshold()) {
+        } else if(c.getCustomerType().equals("BRONZE") && c.getPoints() >= this.customerTypes.get("SILVER").getPointThreshold()) {
             c.setCustomerType("SILVER");
-        } else if(c.getCustomerType().equals("SILVER") && c.getPoints() >= customerTypes.get("SILVER").getPointThreshold()) {
+        } else if(c.getCustomerType().equals("SILVER") && c.getPoints() >= this.customerTypes.get("GOLD").getPointThreshold()) {
             c.setCustomerType("GOLD");
         }
 
