@@ -40,24 +40,26 @@ public class EventDAO {
         e1.setActive(true);
         e1.setCapacity(230);
         e1.setAvailableTickets(33);
-        e1.setLocation(1);
+        e1.setLocation(locationDAO.findOne(1));
         e1.setRegularPrice(300);
         e1.setName("Grad kulture");
         e1.setStartTime(new Date(121, Calendar.SEPTEMBER, 22));
         e1.setEventType("Cultural event");
         e1.setPoster("images/e1.jfif");
+        e1.setSalesman("s5");
 
         Event e2 = new Event();
         e2.setId(2);
         e2.setActive(true);
         e2.setCapacity(210);
         e2.setAvailableTickets(10);
-        e2.setLocation(2);
+        e2.setLocation(locationDAO.findOne(2));
         e2.setRegularPrice(250);
         e2.setName("Koncert Rade Manojlovic");
         e2.setStartTime(new Date(121, Calendar.SEPTEMBER, 15));
         e2.setEventType("Concert");
         e2.setPoster("images/e2.jfif");
+        e2.setSalesman("s5");
 
         events.put(1, e1);
         events.put(2, e2);
@@ -114,7 +116,7 @@ public class EventDAO {
             e.printStackTrace();
         }
         for(Event e : this.events.values()) {
-            Location l = locationDAO.findOne(e.getLocation());
+            Location l = e.getLocation();
             if(e.getId() != event.getId()) {
                 if(e.getStartTime().equals(event.getStartTime()) && l.getLatitude() == location.getLatitude() && l.getLongitude() == location.getLongitude()) {
                     return false;
@@ -122,5 +124,15 @@ public class EventDAO {
             }
         }
         return true;
+    }
+
+    public ArrayList<Event> getAvailableEventsForSalesman(String salesman) {
+        ArrayList<Event> availableEvents = new ArrayList<>();
+        for(Event event : this.events.values()) {
+            if(event.getSalesman().equals(salesman)) {
+                availableEvents.add(event);
+            }
+        }
+        return availableEvents;
     }
 }

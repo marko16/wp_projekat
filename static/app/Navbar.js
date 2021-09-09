@@ -53,6 +53,9 @@ Vue.component("navbar", {
           <li v-if="role == 'salesman'"  class="nav-item active">
                 <a type="button" class="btn btn-dark mr-1" href="/#/addEvent">Add event</a>
             </li>
+            <li v-if="role == 'salesman'"  class="nav-item active">
+                <a type="button" class="btn btn-dark mr-1" href="/#/eventSalesman">View events</a>
+            </li>
         </ul>
         <ul class="nav navbar-nav ml-auto" style="left: auto !important;
         right: 0px;">

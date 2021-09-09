@@ -187,6 +187,12 @@
     position: absolute;
 }
 
+tr:hover{
+    cursor: pointer;
+}
+.table tbody tr.highlight td {
+    background-color: #ddd;
+}
 .info h2 {text-align: center}
 .product-image:hover .info{transform: translateX(0);}
 

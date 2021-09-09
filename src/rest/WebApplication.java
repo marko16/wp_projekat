@@ -92,8 +92,55 @@ public class WebApplication {
            return gson.toJson(eventDAO.getAvailableEvents());
         });
 
+        get("/eventSalesman", (req, res) -> {
+            String salesman = req.queryParams("salesman");
+            return gson.toJson(eventDAO.getAvailableEventsForSalesman(salesman));
+        });
+
         get("/event", (req, res) -> {
             return gson.toJson(eventDAO.findOne(Integer.parseInt(req.queryParams("id"))));
+        });
+
+        post("/editEvent", (req, res) -> {
+            Gson gsonReq = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'hh:mm").create();
+            EventDTO eventDTO = gsonReq.fromJson(req.body(), EventDTO.class);
+
+            Location location = eventDTO.getLocation();
+            location.setId(locationDAO.nextId());
+
+            Event event = eventDTO.getEvent();
+            event.setId(eventDAO.nextId());
+            event.setLocation(location);
+            String poster = "";
+            boolean posterChosen = true;
+
+            if(event.getStartTime() == null) {
+                Event e = eventDAO.findOne(event.getId());
+                event.setStartTime(e.getStartTime());
+            }
+
+            byte[] imageByte = Base64.getDecoder().decode(poster);
+            ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+            BufferedImage image = ImageIO.read(bis);
+            bis.close();
+            String posterName = "e" + event.getId() + ".png";
+
+            if(eventDAO.isLocationAvailable(event, location)) {
+                if (image != null) {
+                    File outputFile = new File(System.getProperty("user.dir") + "\\static\\images" + posterName);
+                    ImageIO.write(image, "png", outputFile);
+                    event.setPoster("images/" + posterName);
+                }
+                event.setActive(true);
+                eventDAO.add(event);
+            }
+            else {
+                return false;
+            }
+
+            locationDAO.add(location);
+            salesmanDAO.addEventToSalesman(event);
+            return true;
         });
 
         post("/reserve", (req, res) -> {
@@ -174,7 +221,7 @@ public class WebApplication {
 
             Event event = eventDTO.getEvent();
             event.setId(eventDAO.nextId());
-            event.setLocation(location.getId());
+            event.setLocation(location);
             String poster = "";
             boolean posterChosen = true;
 
