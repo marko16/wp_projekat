@@ -1,11 +1,15 @@
 package dao;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import dto.TicketDTO;
+import model.Event;
+import model.Salesman;
 import model.Ticket;
 import model.TicketType;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -14,8 +18,21 @@ public class TicketDAO {
 
     public TicketDAO() {
         this.tickets = new HashMap<>();
+        loadAll();
     }
 
+    public void loadAll() {
+        Gson gson = new Gson();
+        Type token = new TypeToken<HashMap<String, Ticket>>(){}.getType();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader("files/tickets.json"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        assert br != null;
+        this.tickets = gson.fromJson(br, token);
+    }
 
     public ArrayList<String> createOrder(String username, String eventId, String amount, String ticketType, double regularPrice) {
         ArrayList<String> ticketIds = new ArrayList<>();
@@ -69,5 +86,54 @@ public class TicketDAO {
                     .charAt(index));
         }
         return sb.toString();
+    }
+
+    public ArrayList<TicketDTO> getTicketsOfSalesmanEvents(String salesmanUsername, HashMap<Integer, Event> events) {
+        ArrayList<TicketDTO> retVal = new ArrayList<>();
+        for(Ticket ticket : tickets.values()) {
+            if(events.get(ticket.getEvent()).getSalesman().equals(salesmanUsername)) {
+                System.out.println("|ua");
+                createTicketDTO(events, retVal, ticket);
+            }
+        }
+        return retVal;
+    }
+
+    public ArrayList<TicketDTO> getTicketsOfCustomer(String customerUsername, HashMap<Integer, Event> events) {
+        ArrayList<TicketDTO> retVal = new ArrayList<>();
+        for(Ticket ticket : tickets.values()) {
+            if(ticket.getCustomer().equals(customerUsername)) {
+                createTicketDTO(events, retVal, ticket);
+            }
+        }
+        return retVal;
+    }
+
+    private void createTicketDTO(HashMap<Integer, Event> events, ArrayList<TicketDTO> retVal, Ticket ticket) {
+        TicketDTO dto = new TicketDTO();
+        Event event = events.get(ticket.getEvent());
+        dto.setId(ticket.getId());
+        dto.setEventName(event.getName());
+        dto.setEventDate(event.getStartTime());
+        dto.setCustomerUsername(ticket.getCustomer());
+        dto.setPrice(ticket.getPrice());
+        dto.setType(ticket.getType());
+        dto.setReserved(ticket.isReserved());
+
+        retVal.add(dto);
+    }
+
+    public Ticket findOne(String id) {
+        return tickets.getOrDefault(id, null);
+    }
+
+    public void cancelReservation(String id) {
+        Ticket t = tickets.get(id);
+        t.setReserved(false);
+        try {
+            writeAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

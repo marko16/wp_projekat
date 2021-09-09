@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import controller.UserController;
 import dao.*;
 import dto.EventDTO;
+import dto.TicketDTO;
 import model.*;
 import spark.Filter;
 import spark.Request;
@@ -19,8 +20,9 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Base64;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import com.google.gson.Gson;
 
@@ -73,15 +75,14 @@ public class WebApplication {
                             username = uname;
                             response.add(username);
                             response.add("salesman");
-                        }else {
+                        } else {
                             username = "blocked";
                             response.add(username);
                         }
-                    }else {
+                    } else {
                         response.add(username);
 
                     }
-
                 }
             }
             return gson.toJson(response);
@@ -99,6 +100,48 @@ public class WebApplication {
 
         get("/event", (req, res) -> {
             return gson.toJson(eventDAO.findOne(Integer.parseInt(req.queryParams("id"))));
+        });
+
+        get("/tickets", (req, res) -> {
+            String usernameSalesman = req.queryParams("salesman");
+            HashMap<Integer, Event> events = eventDAO.loadAll();
+            ArrayList<TicketDTO> ticketsDTO = ticketDAO.getTicketsOfSalesmanEvents(usernameSalesman, events);
+            return gson.toJson(ticketsDTO);
+
+        });
+
+        get("/ticketsUser", (req, res) -> {
+            String customerUsername = req.queryParams("customer");
+            System.out.println(customerUsername);
+            HashMap<Integer, Event> events = eventDAO.loadAll();
+            ArrayList<TicketDTO> ticketsDTO = ticketDAO.getTicketsOfCustomer(customerUsername, events);
+            return gson.toJson(ticketsDTO);
+        });
+
+        post("/cancelReservation", (req, res) -> {
+            String id = req.queryParams("id");
+            if(id == null) return "No event has been selected!";
+
+            Ticket ticket = ticketDAO.findOne(id);
+            if(!ticket.isReserved()) {
+                return "Reservation already canceled!";
+            }
+
+            Event event = eventDAO.findOne(ticket.getEvent());
+
+            Date date = new Date();
+            DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
+            String toDate = dateformat.format(date);
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, +7);
+            Date toDate1 = cal.getTime();
+
+            if(event.getStartTime().before(toDate1)) {
+                return "Cannot cancel reservation of event that is 7 days due or passed!";
+            }
+
+            ticketDAO.cancelReservation(id);
+            return "You have successfully canceled this reservation!";
         });
 
         post("/editEvent", (req, res) -> {

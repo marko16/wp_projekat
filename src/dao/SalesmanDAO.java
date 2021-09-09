@@ -2,7 +2,6 @@ package dao;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import model.Customer;
 import model.Event;
 import model.Gender;
 import model.Salesman;

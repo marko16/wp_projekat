@@ -1,12 +1,12 @@
 package dao;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import model.Event;
 import model.Location;
 
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class EventDAO {
@@ -15,6 +15,7 @@ public class EventDAO {
 
     public EventDAO() {
         events = new HashMap<>();
+        this.loadAll();
         try {
             locationDAO.loadAll();
         } catch (FileNotFoundException e) {
@@ -26,6 +27,20 @@ public class EventDAO {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public HashMap<Integer, Event> loadAll() {
+        Gson gson = new Gson();
+        Type token = new TypeToken<HashMap<Integer,Event>>(){}.getType();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader("files/events.json"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        assert br != null;
+        this.events = gson.fromJson(br, token);
+        return this.events;
     }
 
     private void writeAll() throws IOException {

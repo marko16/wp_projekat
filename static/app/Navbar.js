@@ -42,7 +42,7 @@ Vue.component("navbar", {
             <a class="btn btn-dark mr-1" href="/#/tickets">Tickets</a>
           </li>
           <li v-if="role =='salesman' " class="nav-item active">
-            <a class="btn btn-dark mr-1" href="/#/salesmanCutomer">View customers</a>
+            <a class="btn btn-dark mr-1" href="/#/salesmanTickets">View tickets</a>
           </li>
           <li v-if="role =='salesman' " class="nav-item active">
             <a class="btn btn-dark mr-1" href="/#/approveComments">Comment approval</a>
