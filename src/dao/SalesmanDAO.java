@@ -3,6 +3,7 @@ package dao;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import model.Customer;
+import model.Event;
 import model.Gender;
 import model.Salesman;
 
@@ -87,5 +88,12 @@ public class SalesmanDAO {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void addEventToSalesman(Event event) {
+        Salesman salesman = salesmen.get(event.getSalesman());
+
+        if(salesman.getEvents() == null) salesman.setEvents(new ArrayList<>());
+        salesman.getEvents().add(event.getId());
     }
 }

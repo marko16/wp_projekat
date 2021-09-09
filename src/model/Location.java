@@ -1,6 +1,7 @@
 package model;
 
 public class Location {
+    private int id;
     private double longitude;
     private double latitude;
     private String street;
@@ -9,6 +10,14 @@ public class Location {
     private int zipcode;
 
     public Location() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public double getLongitude() {

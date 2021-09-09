@@ -3,7 +3,8 @@ const EventListView = { template: '<event-list-view></event-list-view>' };
 const EventView = { template: '<EventView></EventView>' };
 const Register = { template: '<Register></Register>' };
 const ChangePassword = { template: '<ChangePassword></ChangePassword>' }
-const SalesmanRegister = { template: '<SalesmanRegister></SalesmanRegister>'}
+const SalesmanRegister = { template: '<SalesmanRegister></SalesmanRegister>' }
+const AddEvent = { template: '<AddEvent></AddEvent>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -13,7 +14,8 @@ const router = new VueRouter({
         { path: '/event/:id', name: 'event', component: EventView, props: true },
         { path: '/reg', component: Register },
         { path: '/changePassword', component: ChangePassword },
-        { path: '/salesmanRegister', component: SalesmanRegister }
+        { path: '/salesmanRegister', component: SalesmanRegister },
+        { path: '/addEvent', component: AddEvent }
     ]
 });
 

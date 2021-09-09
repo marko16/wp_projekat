@@ -6,6 +6,8 @@ import model.Location;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class LocationDAO {
@@ -14,17 +16,17 @@ public class LocationDAO {
     public LocationDAO() {
         locations = new HashMap<>();
 
-//        try {
-//          loadAll();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-
         try {
-            writeAll();
-        } catch (IOException e) {
+          loadAll();
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+//        try {
+//            writeAll();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void writeAll() throws IOException {
@@ -54,10 +56,27 @@ public class LocationDAO {
         fw.close();
     }
 
-    void loadAll() throws FileNotFoundException {
+    public void loadAll() throws FileNotFoundException {
         Gson gson = new Gson();
         Type token = new TypeToken<HashMap<Integer,Location>>(){}.getType();
         BufferedReader br = new BufferedReader(new FileReader("files/locations.json"));
         this.locations = gson.fromJson(br, token);
+    }
+
+    public int nextId() {
+        return Collections.max(this.locations.keySet()) + 1;
+    }
+
+    public void add(Location location) {
+        locations.put(location.getId(), location);
+        try {
+            this.writeAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Location findOne(int location) {
+        return locations.getOrDefault(location, null);
     }
 }

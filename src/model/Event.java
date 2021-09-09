@@ -14,8 +14,17 @@ public class Event {
     private Date startTime;
     private double regularPrice;
     private boolean isActive;
-    private Location location;
+    private int location;
     private String poster;
+    private String salesman;
+
+    public String getSalesman() {
+        return salesman;
+    }
+
+    public void setSalesman(String salesman) {
+        this.salesman = salesman;
+    }
 
     public Event() {
     }
@@ -84,11 +93,11 @@ public class Event {
         isActive = active;
     }
 
-    public Location getLocation() {
+    public int getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(int location) {
         this.location = location;
     }
 

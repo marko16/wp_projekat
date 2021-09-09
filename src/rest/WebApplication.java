@@ -4,20 +4,27 @@ import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post;
 import static spark.Spark.staticFiles;
+import static spark.route.HttpMethod.after;
 
 import com.google.gson.GsonBuilder;
 import controller.UserController;
 import dao.*;
-import model.Admin;
-import model.Customer;
-import model.Event;
-import model.Salesman;
+import dto.EventDTO;
+import model.*;
+import spark.Filter;
 import spark.Request;
 import spark.Session;
+
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Base64;
 
 import com.google.gson.Gson;
+
+import javax.imageio.ImageIO;
 
 public class WebApplication {
 
@@ -156,6 +163,50 @@ public class WebApplication {
                 return true;
             }
             return false;
+        });
+
+        post("/addEvent", (req, res) -> {
+            Gson gsonReq = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'hh:mm").create();
+            EventDTO eventDTO = gsonReq.fromJson(req.body(), EventDTO.class);
+
+            Location location = eventDTO.getLocation();
+            location.setId(locationDAO.nextId());
+
+            Event event = eventDTO.getEvent();
+            event.setId(eventDAO.nextId());
+            event.setLocation(location.getId());
+            String poster = "";
+            boolean posterChosen = true;
+
+            if(event.getPoster() == null) {
+                posterChosen = false;
+                event.setPoster("images/e1.jfif");
+            }
+            else {
+                poster = event.getPoster().split(",")[1];
+            }
+            byte[] imageByte = Base64.getDecoder().decode(poster);
+            ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+            BufferedImage image = ImageIO.read(bis);
+            bis.close();
+            String posterName = "e" + event.getId() + ".png";
+
+            if(eventDAO.isLocationAvailable(event, location)) {
+                if (posterChosen) {
+                    File outputFile = new File(System.getProperty("user.dir") + "\\static\\images" + posterName);
+                    ImageIO.write(image, "png", outputFile);
+                    event.setPoster("images/" + posterName);
+                }
+                event.setActive(true);
+                eventDAO.add(event);
+            }
+            else {
+                return false;
+            }
+
+            locationDAO.add(location);
+            salesmanDAO.addEventToSalesman(event);
+            return true;
         });
     }
 

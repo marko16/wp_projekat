@@ -7,10 +7,7 @@ import model.Location;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 public class EventDAO {
     private HashMap<Integer, Event> events;
@@ -18,6 +15,11 @@ public class EventDAO {
 
     public EventDAO() {
         events = new HashMap<>();
+        try {
+            locationDAO.loadAll();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         try {
             writeAll();
@@ -38,7 +40,7 @@ public class EventDAO {
         e1.setActive(true);
         e1.setCapacity(230);
         e1.setAvailableTickets(33);
-        e1.setLocation(locationDAO.locations.get(1));
+        e1.setLocation(1);
         e1.setRegularPrice(300);
         e1.setName("Grad kulture");
         e1.setStartTime(new Date(121, Calendar.SEPTEMBER, 22));
@@ -50,7 +52,7 @@ public class EventDAO {
         e2.setActive(true);
         e2.setCapacity(210);
         e2.setAvailableTickets(10);
-        e2.setLocation(locationDAO.locations.get(2));
+        e2.setLocation(2);
         e2.setRegularPrice(250);
         e2.setName("Koncert Rade Manojlovic");
         e2.setStartTime(new Date(121, Calendar.SEPTEMBER, 15));
@@ -90,5 +92,35 @@ public class EventDAO {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public int nextId() {
+        return Collections.max(this.events.keySet()) + 1;
+    }
+
+    public void add(Event event) {
+        events.put(event.getId(), event);
+        try {
+            this.writeAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isLocationAvailable(Event event, Location location) {
+        try {
+            locationDAO.loadAll();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        for(Event e : this.events.values()) {
+            Location l = locationDAO.findOne(e.getLocation());
+            if(e.getId() != event.getId()) {
+                if(e.getStartTime().equals(event.getStartTime()) && l.getLatitude() == location.getLatitude() && l.getLongitude() == location.getLongitude()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
