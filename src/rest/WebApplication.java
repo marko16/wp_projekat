@@ -11,8 +11,10 @@ import controller.UserController;
 import dao.*;
 import dto.EventDTO;
 import dto.TicketDTO;
+import dto.UserDTO;
 import model.*;
 import spark.Filter;
+import spark.QueryParamsMap;
 import spark.Request;
 import spark.Session;
 
@@ -47,6 +49,44 @@ public class WebApplication {
 
         get("/test", (req, res) -> "Works");
 
+        get("/profile", (req, res) -> {
+            String username = req.queryParams("username");
+
+            Admin admin = adminDAO.findOne(username);
+            if(admin != null) {
+                return gson.toJson(admin);
+            }
+            Salesman salesman = salesmanDAO.findOne(username);
+            if(salesman != null) {
+                return gson.toJson(salesman);
+            }
+            Customer customer = customerDAO.findOne(username);
+            if(customer != null) {
+                return gson.toJson(customer);
+            }
+            return null;
+        });
+
+        post("/editProfile", (req, res) -> {
+            String role = req.queryParams("role");
+            String username = req.queryParams("username");
+            String firstName = req.queryParams("firstName");
+            String lastName = req.queryParams("lastName");
+            String birthday = req.queryParams("birthday");
+            String gender = req.queryParams("gender");
+
+            if(role.equals("admin")) {
+                adminDAO.editProfile(username, firstName, lastName, birthday, gender);
+            }
+            if(role.equals("salesman")) {
+                salesmanDAO.editProfile(username, firstName, lastName, birthday, gender);
+            }
+            if(role.equals("customer")) {
+                customerDAO.editProfile(username, firstName, lastName, birthday, gender);
+            }
+            return null;
+        });
+
         post("/login", (req, res)-> {
             String uname  = req.queryParams("username");
             String lozinka = req.queryParams("password");
@@ -69,7 +109,7 @@ public class WebApplication {
                     username = uname;
                     response.add(username);
                     response.add("admin");
-                }else {
+                } else {
                     if(salesmanDAO.login(uname, lozinka) != null) {
                         if(!salesmanDAO.login(uname, lozinka).isBlocked()) {
                             username = uname;
@@ -89,6 +129,12 @@ public class WebApplication {
 
         });
 
+        get("/users", (req, res) -> {
+            ArrayList<UserDTO> users = salesmanDAO.getUsersAdmin();
+            users.addAll(customerDAO.getUsersAdmin());
+            return gson.toJson(users);
+        });
+
         get("/events", (req, res) -> {
            return gson.toJson(eventDAO.getAvailableEvents());
         });
@@ -102,12 +148,43 @@ public class WebApplication {
             return gson.toJson(eventDAO.findOne(Integer.parseInt(req.queryParams("id"))));
         });
 
-        get("/tickets", (req, res) -> {
+        get("/ticketsSalesman", (req, res) -> {
             String usernameSalesman = req.queryParams("salesman");
             HashMap<Integer, Event> events = eventDAO.loadAll();
             ArrayList<TicketDTO> ticketsDTO = ticketDAO.getTicketsOfSalesmanEvents(usernameSalesman, events);
             return gson.toJson(ticketsDTO);
+        });
 
+        get("/ticketsAdmin", (req, res) -> {
+            String usernameSalesman = req.queryParams("admin");
+            HashMap<Integer, Event> events = eventDAO.loadAll();
+            ArrayList<TicketDTO> ticketsDTO = ticketDAO.getTickets(events);
+            return gson.toJson(ticketsDTO);
+        });
+
+        post("/deleteTicket", (req, res) -> {
+            String ticketId = req.queryParams("ticket");
+            return ticketDAO.delete(ticketId);
+        });
+
+        post("/block", (req, res) -> {
+            String role = req.queryParams("role");
+            String username = req.queryParams("username");
+            if(role.equals("CUSTOMER")) {
+                return customerDAO.block(username);
+            } else if(role.equals("SALESMAN")) {
+                return salesmanDAO.block(username);
+            } else return false;
+        });
+
+        post("/unblock", (req, res) -> {
+            String role = req.queryParams("role");
+            String username = req.queryParams("username");
+            if(role.equals("CUSTOMER")) {
+                return customerDAO.unblock(username);
+            } else if(role.equals("SALESMAN")) {
+                return salesmanDAO.unblock(username);
+            } else return false;
         });
 
         get("/ticketsUser", (req, res) -> {

@@ -7,7 +7,6 @@ import model.Admin;
 import java.io.*;
 import java.lang.reflect.Type;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,11 +23,12 @@ public class AdminDAO {
         }
     }
 
-    public void loadAll() throws FileNotFoundException {
+    public HashMap<String, Admin> loadAll() throws FileNotFoundException {
         Gson gson = new Gson();
         Type token = new TypeToken<HashMap<String, Admin>>(){}.getType();
         BufferedReader br = new BufferedReader(new FileReader("files/admins.json"));
         this.admins = gson.fromJson(br, token);
+        return this.admins;
     }
 
     public Admin login(String username, String password) {
@@ -54,6 +54,10 @@ public class AdminDAO {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public void editProfile(String username, String firstName, String lastName, String birthday, String gender) {
 
     }
 }

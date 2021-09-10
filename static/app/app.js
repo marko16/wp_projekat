@@ -10,6 +10,8 @@ const EditEvent = { template: '<EditEvent></EditEvent>' }
 const SalesmanTickets = { template: '<SalesmanTickets></SalesmanTickets>' }
 const UserTickets = { template: '<UserTickets></UserTickets>' }
 const Profile = { template: '<Profile></Profile>' }
+const AdminUsers = { template: '<AdminUsers></AdminUsers>' }
+const AdminTickets = { template: '<AdminTickets></AdminTickets>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -25,7 +27,10 @@ const router = new VueRouter({
         { path: '/eventSalesman', component: EventSalesman },
         { path: '/salesmanTickets', component: SalesmanTickets },
         { path: '/ticketUser', component: UserTickets },
-        { path: '/profie', component: Profile }
+        { path: '/profile', component: Profile },
+        { path: '/adminUsers', component: AdminUsers },
+        { path: '/tickets', component: AdminTickets },
+
     ]
 });
 

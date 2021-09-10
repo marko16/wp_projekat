@@ -136,4 +136,25 @@ public class TicketDAO {
             e.printStackTrace();
         }
     }
+
+    public ArrayList<TicketDTO> getTickets(HashMap<Integer, Event> events) {
+        ArrayList<TicketDTO> retVal = new ArrayList<>();
+        for(Ticket ticket : tickets.values()) {
+                createTicketDTO(events, retVal, ticket);
+        }
+        return retVal;
+    }
+
+    public boolean delete(String ticketId) {
+        Ticket t = tickets.get(ticketId);
+        if(!t.isReserved()) return false;
+
+        t.setReserved(false);
+        try {
+            writeAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 }
