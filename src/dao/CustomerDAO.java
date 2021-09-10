@@ -1,12 +1,15 @@
 package dao;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import dto.UserDTO;
 import model.*;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class CustomerDAO {
@@ -24,11 +27,11 @@ public class CustomerDAO {
             e.printStackTrace();
         }
         
-//        try {
-//            writeAll();
-//        } catch(IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            writeAll();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadTypes() throws FileNotFoundException {
@@ -39,34 +42,34 @@ public class CustomerDAO {
     }
 
     private void writeAll() throws IOException {
-//        Customer c1 = new Customer();
-//        c1.setUsername("c1");
-//        c1.setPassword("123");
-//        c1.setFirstName("Mile");
-//        c1.setLastName("Kitic");
-//        c1.setBlocked(false);
-//        c1.setPoints(20);
-//        c1.setSus(false);
-//        c1.setBirthday(new Date(1998, Calendar.JANUARY, 2));
-//        c1.setGender(Gender.MALE);
-//        c1.setCustomerType("REGULAR");
-//
-//        Customer c2 = new Customer();
-//        c2.setCustomerType("REGULAR");
-//        c2.setFirstName("Toma");
-//        c2.setLastName("Zdravkovic");
-//        c2.setGender(Gender.FEMALE);
-//        c2.setUsername("c2");
-//        c2.setPassword("123");
-//        c2.setBlocked(false);
-//        c2.setPoints(20);
-//        c2.setSus(false);
-//        c2.setBirthday(new Date(1997, Calendar.JANUARY, 2));
-//
-//        customers.put("c1", c1);
-//        customers.put("c2", c2);
+        Customer c1 = new Customer();
+        c1.setUsername("c1");
+        c1.setPassword("123");
+        c1.setFirstName("Mile");
+        c1.setLastName("Kitic");
+        c1.setBlocked(false);
+        c1.setPoints(20);
+        c1.setSus(false);
+        c1.setBirthday(new Date(1998, Calendar.JANUARY, 2));
+        c1.setGender(Gender.MALE);
+        c1.setCustomerType("REGULAR");
 
-        Gson gson = new Gson();
+        Customer c2 = new Customer();
+        c2.setCustomerType("REGULAR");
+        c2.setFirstName("Toma");
+        c2.setLastName("Zdravkovic");
+        c2.setGender(Gender.FEMALE);
+        c2.setUsername("c2");
+        c2.setPassword("123");
+        c2.setBlocked(false);
+        c2.setPoints(20);
+        c2.setSus(false);
+        c2.setBirthday(new Date(1997, Calendar.JANUARY, 2));
+
+        customers.put("c1", c1);
+        customers.put("c2", c2);
+
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
         FileWriter fw = new FileWriter("files/customers.json");
         gson.toJson(this.customers, fw);
         fw.flush();
@@ -74,7 +77,7 @@ public class CustomerDAO {
     }
 
     public HashMap<String, Customer> loadAll() throws FileNotFoundException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
         Type token = new TypeToken<HashMap<String, Customer>>(){}.getType();
         BufferedReader br = new BufferedReader(new FileReader("files/customers.json"));
         this.customers = gson.fromJson(br, token);
@@ -143,7 +146,19 @@ public class CustomerDAO {
         customers.get(username);
     }
 
-    public void editProfile(String username, String firstName, String lastName, String birthday, String gender) {
+    public boolean editProfile(String username, String firstName, String lastName, String birthday, String gender) {
+        Customer customer = customers.get(username);
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("yyyy-MM-dd").parse(birthday);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        customer.setBirthday(date);
+        customer.setGender(Gender.valueOf(gender.toUpperCase(Locale.ROOT)));
+        return true;
     }
 
     public ArrayList<UserDTO> getUsersAdmin() {

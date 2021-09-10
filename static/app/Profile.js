@@ -19,7 +19,7 @@ Vue.component("Profile", {
                 this.firstName = user.firstName
                 this.lastName = user.lastName
                 this.username = user.username
-                this.birthday = user.birthday
+                this.birthday = user.birthday.split("T")[0]
                 if(user.gender === "MALE") this.gender = "male"
                 else this.gender = "female"
             })
@@ -27,24 +27,20 @@ Vue.component("Profile", {
     },
 
     methods: {
-        editProfile(e) {
-            e.preventDefault();
-            e.preventDefault();
-
+        editProfile() {
+            const role = localStorage.getItem("role")
             this.errors = null;
             if(!this.firstName || !this.lastName || !this.username || !this.gender){
                 alert("Fill out all the fields")
-                e.preventDefault();
             }else{
-                axios.post('/editProfile', { firstName: this.firstName,
+                axios.post('/editProfile', {}, { params: { firstName: this.firstName,
                     lastName: this.lastName,
                     username : this.username,
                     password: this.password,
                     gender : this.gender,
                     birthday : this.birthday,
-                    role: window.localStorage.getItem("role")
-                })
-                    .then(response => (alert("You have successfully registered!")));
+                    role: role
+                }}).then(response => (alert("You have successfully registered!")));
             }
         }
     },
@@ -55,7 +51,6 @@ Vue.component("Profile", {
         <div class="card">
           <div class="card-header"  style="background-color:#333333; color:white">Profile</div>
           <div class="card-body">
-            <form name="myform" @submit="editProfile">
             <div class="form-group row">
             <label
               for="username"
@@ -67,7 +62,8 @@ Vue.component("Profile", {
                 id="username"
                 class="form-control"
                 name="username"
-                v-model="username"/>
+                v-model="username"
+                readonly/>
             </div>
             </div>
            
@@ -109,7 +105,8 @@ Vue.component("Profile", {
               v-model="birthday" 
               class="form-control form-control-user"
               type="date" 
-              name="birthday">
+              name="birthday"
+              required>
               </div>
               </div>
           <div class="form-group row">
@@ -132,11 +129,10 @@ Vue.component("Profile", {
             </div>
             </div>
             <div class="buttons col-md-1 offset-md-4">
-              <button class="btn" style="margin: 1px; background-color:#0069d9; color:white" >
+              <button class="btn" style="margin: 1px; background-color:#0069d9; color:white" @click="editProfile">
                 Edit profile
               </button>
             </div>
-            </form>
           </div>
         </div>
       </div>

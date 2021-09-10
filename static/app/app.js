@@ -12,6 +12,7 @@ const UserTickets = { template: '<UserTickets></UserTickets>' }
 const Profile = { template: '<Profile></Profile>' }
 const AdminUsers = { template: '<AdminUsers></AdminUsers>' }
 const AdminTickets = { template: '<AdminTickets></AdminTickets>' }
+const AdminEvents = { template: '<AdminEvents></AdminEvents>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -30,7 +31,7 @@ const router = new VueRouter({
         { path: '/profile', component: Profile },
         { path: '/adminUsers', component: AdminUsers },
         { path: '/tickets', component: AdminTickets },
-
+        { path: '/adminEvents', component: AdminEvents },
     ]
 });
 

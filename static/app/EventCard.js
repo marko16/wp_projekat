@@ -42,8 +42,10 @@ Vue.component("EventCard", {
         parseLocation() {
             return `${this.event.location.street} ${this.event.location.number}, ${this.event.location.city} ${this.event.location.zipcode}`
         },
+        dateParse(date) {
+            return date.split("T").join(", ")
+        },
         redirectEvent() {
-
             this.router.push(`/${this.event.id}`)
         },
         seeMore() {
@@ -67,7 +69,7 @@ Vue.component("EventCard", {
         
     <ul class="information">
         <li><strong>Event type : </strong> {{event.eventType}} </li>
-        <li><strong>Start : </strong>{{event.startTime}}</li>
+        <li><strong>Start : </strong>{{dateParse(event.startTime)}}</li>
         <li><strong>Average rating : </strong>4.0</li>
     </ul>    
 <!--    <p class="information">" Let's spread the joy , here is Christmas , the most awaited day of the year.Christmas Tree is what one need the most. Here is the correct tree which will enhance your Christmas.</p>-->

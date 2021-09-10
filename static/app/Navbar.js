@@ -6,7 +6,9 @@ Vue.component("navbar", {
         };
     },
     methods: {
-
+        refresh() {
+            this.$forceUpdate()
+        },
         logout: function (event) {
             event.preventDefault();
             localStorage.removeItem("role");

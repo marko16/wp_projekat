@@ -56,7 +56,7 @@ Vue.component("SalesmanRegister", {
                 id="username"
                 class="form-control"
                 name="username"
-                v-model="username"/>
+                v-model="this.username"/>
             </div>
             </div>
             <div class="form-group row">

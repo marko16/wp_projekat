@@ -1,14 +1,17 @@
 package dao;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import model.Admin;
+import model.Gender;
 
 import java.io.*;
 import java.lang.reflect.Type;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class AdminDAO {
     private HashMap<String, Admin> admins;
@@ -24,7 +27,7 @@ public class AdminDAO {
     }
 
     public HashMap<String, Admin> loadAll() throws FileNotFoundException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
         Type token = new TypeToken<HashMap<String, Admin>>(){}.getType();
         BufferedReader br = new BufferedReader(new FileReader("files/admins.json"));
         this.admins = gson.fromJson(br, token);
@@ -57,7 +60,18 @@ public class AdminDAO {
 
     }
 
-    public void editProfile(String username, String firstName, String lastName, String birthday, String gender) {
-
+    public boolean editProfile(String username, String firstName, String lastName, String birthday, String gender) {
+        Admin admin = admins.get(username);
+        admin.setFirstName(firstName);
+        admin.setLastName(lastName);
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("yyyy-MM-dd").parse(birthday);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        admin.setBirthday(date);
+        admin.setGender(Gender.valueOf(gender.toUpperCase(Locale.ROOT)));
+        return true;
     }
 }

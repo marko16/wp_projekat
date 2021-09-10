@@ -1,12 +1,15 @@
 package dao;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import dto.UserDTO;
 import model.*;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class SalesmanDAO {
@@ -21,36 +24,36 @@ public class SalesmanDAO {
             e.printStackTrace();
         }
 
-//        try {
-//            writeAll();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            writeAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void writeAll() throws IOException {
-//        Salesman s1 = new Salesman();
-//        s1.setUsername("s1");
-//        s1.setFirstName("Ivana");
-//        s1.setLastName("Manojlovic");
-//        s1.setPassword("123");
-//        s1.setBlocked(false);
-//        s1.setGender(Gender.FEMALE);
-//        s1.setBirthday(new Date(1978, Calendar.JUNE, 22));
-//
-//        Salesman s2 = new Salesman();
-//        s2.setUsername("s2");
-//        s2.setFirstName("Mira");
-//        s2.setLastName("Miric");
-//        s2.setPassword("123");
-//        s2.setBlocked(false);
-//        s2.setGender(Gender.FEMALE);
-//        s2.setBirthday(new Date(1976, Calendar.JUNE, 22));
-//
-//        salesmen.put("s1", s1);
-//        salesmen.put("s2", s2);
+        Salesman s1 = new Salesman();
+        s1.setUsername("s1");
+        s1.setFirstName("Ivana");
+        s1.setLastName("Manojlovic");
+        s1.setPassword("123");
+        s1.setBlocked(false);
+        s1.setGender(Gender.FEMALE);
+        s1.setBirthday(new Date(1978, Calendar.JUNE, 22));
 
-        Gson gson = new Gson();
+        Salesman s2 = new Salesman();
+        s2.setUsername("s2");
+        s2.setFirstName("Mira");
+        s2.setLastName("Miric");
+        s2.setPassword("123");
+        s2.setBlocked(false);
+        s2.setGender(Gender.FEMALE);
+        s2.setBirthday(new Date(1976, Calendar.JUNE, 22));
+
+        salesmen.put("s1", s1);
+        salesmen.put("s2", s2);
+
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
         FileWriter fw = new FileWriter("files/salesmen.json");
         gson.toJson(this.salesmen, fw);
         fw.flush();
@@ -58,7 +61,7 @@ public class SalesmanDAO {
     }
 
     public HashMap<String, Salesman> loadAll() throws FileNotFoundException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
         Type token = new TypeToken<HashMap<String, Salesman>>(){}.getType();
         BufferedReader br = new BufferedReader(new FileReader("files/salesmen.json"));
         this.salesmen = gson.fromJson(br, token);
@@ -96,7 +99,19 @@ public class SalesmanDAO {
         salesman.getEvents().add(event.getId());
     }
 
-    public void editProfile(String username, String firstName, String lastName, String birthday, String gender) {
+    public boolean editProfile(String username, String firstName, String lastName, String birthday, String gender) {
+        Salesman salesman = salesmen.get(username);
+        salesman.setFirstName(firstName);
+        salesman.setLastName(lastName);
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("yyyy-MM-dd").parse(birthday);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        salesman.setBirthday(date);
+        salesman.setGender(Gender.valueOf(gender.toUpperCase(Locale.ROOT)));
+        return true;
     }
 
     public ArrayList<UserDTO> getUsersAdmin() {

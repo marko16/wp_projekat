@@ -17,6 +17,7 @@ public class Event {
     private Location location;
     private String poster;
     private String salesman;
+    private boolean deleted;
 
     public String getSalesman() {
         return salesman;
@@ -27,6 +28,14 @@ public class Event {
     }
 
     public Event() {
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public int getAvailableTickets() {

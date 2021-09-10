@@ -32,7 +32,7 @@ import javax.imageio.ImageIO;
 
 public class WebApplication {
 
-    private static Gson gson = new Gson();
+    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
     private static UserController uc = new UserController();
 
     private static CustomerDAO customerDAO = new CustomerDAO();
@@ -75,16 +75,18 @@ public class WebApplication {
             String birthday = req.queryParams("birthday");
             String gender = req.queryParams("gender");
 
+
+
             if(role.equals("admin")) {
-                adminDAO.editProfile(username, firstName, lastName, birthday, gender);
+                return adminDAO.editProfile(username, firstName, lastName, birthday, gender);
             }
             if(role.equals("salesman")) {
-                salesmanDAO.editProfile(username, firstName, lastName, birthday, gender);
+                return salesmanDAO.editProfile(username, firstName, lastName, birthday, gender);
             }
             if(role.equals("customer")) {
-                customerDAO.editProfile(username, firstName, lastName, birthday, gender);
+                return customerDAO.editProfile(username, firstName, lastName, birthday, gender);
             }
-            return null;
+            return false;
         });
 
         post("/login", (req, res)-> {
@@ -135,9 +137,9 @@ public class WebApplication {
             return gson.toJson(users);
         });
 
-        get("/events", (req, res) -> {
-           return gson.toJson(eventDAO.getAvailableEvents());
-        });
+        get("/events", (req, res) -> gson.toJson(eventDAO.getAvailableEvents()));
+
+        get("/eventAdmin", (req, res) -> gson.toJson(eventDAO.loadAll().values()));
 
         get("/eventSalesman", (req, res) -> {
             String salesman = req.queryParams("salesman");
@@ -165,6 +167,11 @@ public class WebApplication {
         post("/deleteTicket", (req, res) -> {
             String ticketId = req.queryParams("ticket");
             return ticketDAO.delete(ticketId);
+        });
+
+        post("/deleteEvent", (req, res) -> {
+            int id = Integer.parseInt(req.queryParams("event"));
+            return eventDAO.delete(id);
         });
 
         post("/block", (req, res) -> {

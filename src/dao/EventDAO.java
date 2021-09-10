@@ -1,9 +1,11 @@
 package dao;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import model.Event;
 import model.Location;
+import model.Ticket;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -30,7 +32,7 @@ public class EventDAO {
     }
 
     public HashMap<Integer, Event> loadAll() {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
         Type token = new TypeToken<HashMap<Integer,Event>>(){}.getType();
         BufferedReader br = null;
         try {
@@ -62,6 +64,7 @@ public class EventDAO {
         e1.setEventType("Cultural event");
         e1.setPoster("images/e1.jfif");
         e1.setSalesman("s5");
+        e1.setDeleted(false);
 
         Event e2 = new Event();
         e2.setId(2);
@@ -75,11 +78,12 @@ public class EventDAO {
         e2.setEventType("Concert");
         e2.setPoster("images/e2.jfif");
         e2.setSalesman("s5");
+        e2.setDeleted(false);
 
         events.put(1, e1);
         events.put(2, e2);
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
         FileWriter fw = new FileWriter("files/events.json");
         gson.toJson(this.events, fw);
         fw.flush();
@@ -149,5 +153,18 @@ public class EventDAO {
             }
         }
         return availableEvents;
+    }
+
+    public boolean delete(int id) {
+        Event event = events.get(id);
+        if(event.isDeleted()) return false;
+
+        event.setDeleted(true);
+        try {
+            writeAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }

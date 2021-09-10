@@ -25,6 +25,7 @@ Vue.component("Login", {
     methods: {
         register() {
             this.$router.push("/reg");
+
         },
         login() {
             axios.post('/login', {}, {
