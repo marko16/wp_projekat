@@ -22,42 +22,42 @@ public class LocationDAO {
             e.printStackTrace();
         }
 
-        try {
-            writeAll();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            writeAll();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void writeAll() throws IOException {
-        locations = new HashMap<>();
-        Location l1 = new Location();
-        l1.setCity("Novi Sad");
-        l1.setLatitude(45.2361365);
-        l1.setLongitude(19.838948636610578);
-        l1.setNumber("7");
-        l1.setZipcode(21000);
-        l1.setStreet("Bulevar despota Stefana");
-
-        Location l2 = new Location();
-        l2.setCity("Novi Sad");
-        l2.setLatitude(45.2596599);
-        l2.setLongitude(19.8331895);
-        l2.setNumber("43");
-        l2.setZipcode(21000);
-        l2.setStreet("Bulevar oslobodjenja");
-
-        Location l3 = new Location();
-        l3.setCity("Novi Sad");
-        l3.setLatitude(45.2549067);
-        l3.setLongitude(19.8345434);
-        l3.setNumber("5");
-        l3.setZipcode(21000);
-        l3.setStreet("Novosadskog sajma");
-
-        locations.put(1, l1);
-        locations.put(2, l2);
-        locations.put(3, l3);
+//        locations = new HashMap<>();
+//        Location l1 = new Location();
+//        l1.setCity("Novi Sad");
+//        l1.setLatitude(45.2361365);
+//        l1.setLongitude(19.838948636610578);
+//        l1.setNumber("7");
+//        l1.setZipcode(21000);
+//        l1.setStreet("Bulevar despota Stefana");
+//
+//        Location l2 = new Location();
+//        l2.setCity("Novi Sad");
+//        l2.setLatitude(45.2596599);
+//        l2.setLongitude(19.8331895);
+//        l2.setNumber("43");
+//        l2.setZipcode(21000);
+//        l2.setStreet("Bulevar oslobodjenja");
+//
+//        Location l3 = new Location();
+//        l3.setCity("Novi Sad");
+//        l3.setLatitude(45.2549067);
+//        l3.setLongitude(19.8345434);
+//        l3.setNumber("5");
+//        l3.setZipcode(21000);
+//        l3.setStreet("Novosadskog sajma");
+//
+//        locations.put(1, l1);
+//        locations.put(2, l2);
+//        locations.put(3, l3);
 
         Gson gson = new Gson();
         FileWriter fw = new FileWriter("files/locations.json");

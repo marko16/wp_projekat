@@ -16,7 +16,7 @@ public class CommentDAO {
 
     public CommentDAO() {
         comments = new HashMap<>();
-        examples();
+        //examples();
         loadAll();
     }
 

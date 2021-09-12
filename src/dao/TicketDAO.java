@@ -20,6 +20,11 @@ public class TicketDAO {
 
     public TicketDAO() {
         this.tickets = new HashMap<>();
+//        try {
+//            writeAll();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         loadAll();
     }
 
@@ -69,6 +74,14 @@ public class TicketDAO {
     }
 
     private void writeAll() throws IOException {
+//        Ticket t1 = new Ticket();
+//        t1.setReserved(true);
+//        t1.setCustomer("c1");
+//        t1.setPrice(300);
+//        t1.setType(TicketType.REGULAR);
+//        t1.setEvent(1);
+//        t1.setId("anrHKSmteD");
+//        tickets.put(t1.getId(), t1);
         Gson gson = new Gson();
         FileWriter fw = new FileWriter("files/tickets.json");
         gson.toJson(this.tickets, fw);
@@ -102,8 +115,8 @@ public class TicketDAO {
 
     public ArrayList<TicketDTO> getTicketsOfCustomer(String customerUsername, HashMap<Integer, Event> events) {
         ArrayList<TicketDTO> retVal = new ArrayList<>();
-        for(Ticket ticket : tickets.values()) {
-            if(ticket.getCustomer().equals(customerUsername)) {
+        for (Ticket ticket : tickets.values()) {
+            if (ticket.getCustomer().equals(customerUsername)) {
                 createTicketDTO(events, retVal, ticket);
             }
         }

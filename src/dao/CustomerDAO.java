@@ -21,11 +21,11 @@ public class CustomerDAO {
         customers = new HashMap<String, Customer>();
         customerTypes = new HashMap<>();
 
-        try {
-            writeAll();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            writeAll();
+//        } catch(IOException e) {
+//            e.printStackTrace();
+//        }
 
         try {
             loadAll();
@@ -45,32 +45,32 @@ public class CustomerDAO {
     }
 
     private void writeAll() throws IOException {
-        Customer c1 = new Customer();
-        c1.setUsername("c1");
-        c1.setPassword("123");
-        c1.setFirstName("Mile");
-        c1.setLastName("Kitic");
-        c1.setBlocked(false);
-        c1.setPoints(20);
-        c1.setSus(false);
-        c1.setBirthday(new Date(1998, Calendar.JANUARY, 2));
-        c1.setGender(Gender.MALE);
-        c1.setCustomerType("REGULAR");
-
-        Customer c2 = new Customer();
-        c2.setCustomerType("REGULAR");
-        c2.setFirstName("Toma");
-        c2.setLastName("Zdravkovic");
-        c2.setGender(Gender.FEMALE);
-        c2.setUsername("c2");
-        c2.setPassword("123");
-        c2.setBlocked(false);
-        c2.setPoints(20);
-        c2.setSus(false);
-        c2.setBirthday(new Date(1997, Calendar.JANUARY, 2));
-
-        customers.put("c1", c1);
-        customers.put("c2", c2);
+//        Customer c1 = new Customer();
+//        c1.setUsername("c1");
+//        c1.setPassword("123");
+//        c1.setFirstName("Mile");
+//        c1.setLastName("Kitic");
+//        c1.setBlocked(false);
+//        c1.setPoints(20);
+//        c1.setSus(false);
+//        c1.setBirthday(new Date(1998, Calendar.JANUARY, 2));
+//        c1.setGender(Gender.MALE);
+//        c1.setCustomerType("REGULAR");
+//
+//        Customer c2 = new Customer();
+//        c2.setCustomerType("REGULAR");
+//        c2.setFirstName("Toma");
+//        c2.setLastName("Zdravkovic");
+//        c2.setGender(Gender.FEMALE);
+//        c2.setUsername("c2");
+//        c2.setPassword("123");
+//        c2.setBlocked(false);
+//        c2.setPoints(20);
+//        c2.setSus(false);
+//        c2.setBirthday(new Date(1997, Calendar.JANUARY, 2));
+//
+//        customers.put("c1", c1);
+//        customers.put("c2", c2);
 
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
         FileWriter fw = new FileWriter("files/customers.json");
