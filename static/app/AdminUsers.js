@@ -6,7 +6,8 @@ Vue.component("AdminUsers", {
                 isAsc: false,
                 selectedItem: -1
             },
-            items: []
+            items: [],
+            searchQuery: null
         }
     },
 
@@ -66,6 +67,17 @@ Vue.component("AdminUsers", {
         },
         parseRole(role) {
             return String(role).charAt(0) + String(role).toString().slice(1).toLowerCase()
+        },
+        searchUsers() {
+            if(this.searchQuery === null) return;
+            axios.get("/searchUsers?search=" + this.searchQuery)
+                .then(response => {
+                    console.log(response.data)
+                    if(response.data.length !== 0)
+                        this.items = response.data
+                    else
+                        alert("No results!")
+                })
         }
     },
 
@@ -86,6 +98,12 @@ Vue.component("AdminUsers", {
 
     template: `
     <div class="container">
+<div class="input-group mb-3">
+  <input type="text" class="form-control" placeholder="Search..." aria-label="" aria-describedby="basic-addon2" v-model="searchQuery">
+  <div class="input-group-append">
+    <button class="btn btn-primary" type="button" @click="searchUsers">Search</button>
+  </div>
+    </div>
      <table class="table sortable table-striped table-hover"
         id="table"
      >

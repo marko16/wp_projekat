@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CustomerDAO {
     private HashMap<String, Customer> customers;
@@ -111,7 +112,6 @@ public class CustomerDAO {
 //        c.getTickets().addAll(tickets);
 
         c.setPoints(c.getPoints() + points);
-        System.out.println(this.customerTypes.get("REGULAR"));
         if(c.getCustomerType().equals("REGULAR") && c.getPoints() >= this.customerTypes.get("BRONZE").getPointThreshold()) {
             c.setCustomerType("BRONZE");
         } else if(c.getCustomerType().equals("BRONZE") && c.getPoints() >= this.customerTypes.get("SILVER").getPointThreshold()) {
@@ -202,5 +202,32 @@ public class CustomerDAO {
             e.printStackTrace();
         }
         return true;
+    }
+
+    public Collection<UserDTO> search(String search) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String finalSearch = search.toLowerCase();
+        ArrayList<UserDTO> userDTOS = new ArrayList<>();
+
+        ArrayList<Customer> toConvert =  customers.values().stream().filter(x ->
+                x.getFirstName().toLowerCase().contains(finalSearch) || x.getLastName().toLowerCase().contains(finalSearch) ||
+                        x.getUsername().toLowerCase().contains(finalSearch))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        for(Customer c : toConvert) {
+            UserDTO userDTO = new UserDTO();
+
+            userDTO.setBlocked(c.isBlocked());
+            userDTO.setUserType(c.getCustomerType());
+            userDTO.setUsername(c.getUsername());
+            userDTO.setLastName(c.getLastName());
+            userDTO.setFirstName(c.getFirstName());
+            userDTO.setRole(Role.CUSTOMER);
+            userDTO.setPoints(c.getPoints());
+
+            userDTOS.add(userDTO);
+        }
+
+        return userDTOS;
     }
 }

@@ -37,6 +37,9 @@ Vue.component("SalesmanTickets", {
         selectRow(item){
             this.selectedItem = item;
         },
+        parseDate(date) {
+            return date.split("T").join(", ")
+        }
     },
 
     computed: {
@@ -107,7 +110,7 @@ Vue.component("SalesmanTickets", {
       >
         <td>{{ item.eventName }}</td>
         <td>{{ item.customerUsername }}</td>
-        <td>{{ item.eventDate }}</td>
+        <td>{{ parseDate(item.eventDate) }}</td>
         <td>{{ item.type }}</td>
         <td>{{ item.price }}</td>
         <td>{{ item.isReserved ? "RESERVED" : "DELETED" }}</td>

@@ -7,7 +7,8 @@ Vue.component("AdminTickets", {
                 isAsc: false,
                 selectedItem: -1
             },
-            items: []
+            items: [],
+            searchQuery: null
         }
     },
 
@@ -43,6 +44,19 @@ Vue.component("AdminTickets", {
                     if(response.data) alert("You have deleted this ticket!")
                     else alert("Ticket already deleted")
                 })
+        },
+        parseDate(date) {
+            return date.split("T").join(", ")
+        },
+        searchTickets() {
+            axios.get("/searchTickets?search=" + this.searchQuery)
+                .then(response => {
+                    console.log(response.data)
+                    if(response.data.length !== 0)
+                        this.items = response.data
+                    else
+                        alert("No results!")
+                })
         }
     },
 
@@ -63,6 +77,12 @@ Vue.component("AdminTickets", {
 
     template: `
 <div class="container">
+<div class="input-group mb-3">
+  <input type="text" class="form-control" placeholder="Search..." aria-label="" aria-describedby="basic-addon2" v-model="searchQuery">
+  <div class="input-group-append">
+    <button class="btn btn-primary" type="button" @click="searchTickets">Search</button>
+  </div>
+    </div>
      <table class="table table-striped table-hover"
         id="table"
      >
@@ -114,7 +134,7 @@ Vue.component("AdminTickets", {
       >
         <td>{{ item.eventName }}</td>
         <td>{{ item.customerUsername }}</td>
-        <td>{{ item.eventDate }}</td>
+        <td>{{ parseDate(item.eventDate) }}</td>
         <td>{{ item.type }}</td>
         <td>{{ item.price }}</td>
         <td>{{ item.isReserved ? "RESERVED" : "DELETED" }}</td>

@@ -4,6 +4,7 @@ Vue.component("EventListView", {
     data() {
         return {
             events: [],
+            searchQuery: null,
         }
     },
 
@@ -22,11 +23,28 @@ Vue.component("EventListView", {
     methods: {
         onSeeMore(event) {
             this.chosenEvent = event;
+        },
+        searchEvents() {
+            if(this.searchQuery === null) return;
+            axios.get("/searchEvents?search=" + this.searchQuery)
+                .then(response => {
+                    console.log(response.data)
+                    if(response.data.length !== 0)
+                        this.events = response.data
+                    else
+                        alert("No results!")
+                })
         }
     },
 
     template: `
-    
+<div class="container" style="width: 50%">
+    <div class="input-group mb-3">
+  <input type="text" class="form-control" placeholder="Search..." aria-label="" aria-describedby="basic-addon2" v-model="searchQuery">
+  <div class="input-group-append">
+    <button class="btn btn-primary" type="button" @click="searchEvents">Search</button>
+  </div>
+    </div>
     <div>
         <div v-for="e in events" :key="e.id">
 <!--            <div class="card m-2 p-2">-->
@@ -100,6 +118,7 @@ Vue.component("EventListView", {
         </div>
         
      
+    </div>
     </div>
     
     `

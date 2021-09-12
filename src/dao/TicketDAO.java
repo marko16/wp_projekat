@@ -10,8 +10,10 @@ import model.TicketType;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class TicketDAO {
     private HashMap<String, Ticket> tickets;
@@ -92,7 +94,6 @@ public class TicketDAO {
         ArrayList<TicketDTO> retVal = new ArrayList<>();
         for(Ticket ticket : tickets.values()) {
             if(events.get(ticket.getEvent()).getSalesman().equals(salesmanUsername)) {
-                System.out.println("|ua");
                 createTicketDTO(events, retVal, ticket);
             }
         }
@@ -156,5 +157,36 @@ public class TicketDAO {
             e.printStackTrace();
         }
         return true;
+    }
+
+    public ArrayList<TicketDTO> search(String search) {
+        ArrayList<TicketDTO> ticketDTOS = new ArrayList<>();
+
+        EventDAO eventDAO = new EventDAO();
+        HashMap<Integer, Event> events = eventDAO.loadAll();
+        String finalSearch = search.toLowerCase();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+        ArrayList<Ticket> toConvert = tickets.values().stream().filter(x ->
+                events.get(x.getEvent()).getName().toLowerCase().contains(finalSearch) ||
+                        sdf.format(events.get(x.getEvent()).getStartTime()).contains(finalSearch) ||
+                        String.valueOf(x.getPrice()).contains(finalSearch))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        for(Ticket t : toConvert) {
+            TicketDTO ticketDTO = new TicketDTO();
+
+            ticketDTO.setId(t.getId());
+            ticketDTO.setReserved(t.isReserved());
+            ticketDTO.setType(t.getType());
+            ticketDTO.setEventDate(events.get(t.getEvent()).getStartTime());
+            ticketDTO.setEventName(events.get(t.getEvent()).getName());
+            ticketDTO.setPrice(t.getPrice());
+            ticketDTO.setCustomerUsername(t.getCustomer());
+
+            ticketDTOS.add(ticketDTO);
+        }
+
+        return ticketDTOS;
     }
 }

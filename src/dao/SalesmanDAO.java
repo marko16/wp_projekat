@@ -3,6 +3,7 @@ package dao;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import dto.TicketDTO;
 import dto.UserDTO;
 import model.*;
 
@@ -11,6 +12,7 @@ import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SalesmanDAO {
     private HashMap<String, Salesman> salesmen;
@@ -155,5 +157,32 @@ public class SalesmanDAO {
             e.printStackTrace();
         }
         return true;
+    }
+
+    public ArrayList<UserDTO> search(String search) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String finalSearch = search.toLowerCase();
+        ArrayList<UserDTO> userDTOS = new ArrayList<>();
+
+        ArrayList<Salesman> toConvert =  salesmen.values().stream().filter(x ->
+                x.getFirstName().toLowerCase().contains(finalSearch) || x.getLastName().toLowerCase().contains(finalSearch) ||
+                        x.getUsername().toLowerCase().contains(finalSearch))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        for(Salesman s : toConvert) {
+            UserDTO userDTO = new UserDTO();
+
+            userDTO.setBlocked(s.isBlocked());
+            userDTO.setUserType(null);
+            userDTO.setUsername(s.getUsername());
+            userDTO.setLastName(s.getLastName());
+            userDTO.setFirstName(s.getFirstName());
+            userDTO.setRole(Role.SALESMAN);
+            userDTO.setPoints(-1);
+
+            userDTOS.add(userDTO);
+        }
+
+        return userDTOS;
     }
 }

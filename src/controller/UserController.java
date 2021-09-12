@@ -20,7 +20,6 @@ public class UserController {
         return (request, response) -> {
             response.type("application/json");
             response.body(gson.toJson(comment));
-            System.out.println(gson.toJson(comment));
             return gson.toJson(new Object() {
                 final String role = "USER"; final boolean active = true;});
         };

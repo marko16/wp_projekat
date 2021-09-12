@@ -196,7 +196,6 @@ public class WebApplication {
 
         get("/ticketsUser", (req, res) -> {
             String customerUsername = req.queryParams("customer");
-            System.out.println(customerUsername);
             HashMap<Integer, Event> events = eventDAO.loadAll();
             ArrayList<TicketDTO> ticketsDTO = ticketDAO.getTicketsOfCustomer(customerUsername, events);
             return gson.toJson(ticketsDTO);
@@ -331,12 +330,35 @@ public class WebApplication {
             }
             Admin admin = adminDAO.findOne(username);
             if(admin != null) {
-                System.out.println("usao");
                 admin.setPassword(newPassword);
                 adminDAO.writeAll();
                 return true;
             }
             return false;
+        });
+
+        get("/searchEvents", (req, res) -> {
+            String search = req.queryParams("search");
+
+            if(search.equals("null")) return null;
+            return gson.toJson(eventDAO.search(search));
+        });
+
+        get("/searchTickets", (req, res) -> {
+            String search = req.queryParams("search");
+
+            if(search.equals("null")) return null;
+            return gson.toJson(ticketDAO.search(search));
+        });
+
+        get("/searchUsers", (req, res) -> {
+            String search = req.queryParams("search");
+
+            if(search.equals("null")) return null;
+
+            ArrayList<UserDTO> users = salesmanDAO.search(search);
+            users.addAll(customerDAO.search(search));
+            return gson.toJson(users);
         });
 
         post("/addEvent", (req, res) -> {

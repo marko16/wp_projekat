@@ -9,7 +9,9 @@ import model.Ticket;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class EventDAO {
     private HashMap<Integer, Event> events;
@@ -166,5 +168,17 @@ public class EventDAO {
             e.printStackTrace();
         }
         return true;
+    }
+
+    public ArrayList<Event> search(String search) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String finalSearch = search.toLowerCase();
+
+        return events.values().stream().filter(x ->
+            x.getName().toLowerCase().contains(finalSearch) || sdf.format(x.getStartTime()).contains(finalSearch) ||
+                    String.valueOf(x.getRegularPrice()).contains(finalSearch) ||
+                    x.getLocation().getCity().toLowerCase().concat(x.getLocation().getStreet().toLowerCase())
+                        .concat(x.getLocation().getNumber()).concat(String.valueOf(x.getLocation().getZipcode())).contains(finalSearch))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }

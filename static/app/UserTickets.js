@@ -7,7 +7,8 @@ Vue.component("UserTickets", {
                 isAsc: false,
                 selectedItem: null
             },
-            items: []
+            items: [],
+            searchQuery: null
         }
     },
 
@@ -45,6 +46,30 @@ Vue.component("UserTickets", {
                 .then(response => {
                     alert(response.data)
                 })
+        },
+        parseDate(date) {
+            return date.split("T").join(", ")
+        },
+        searchUsers() {
+            if(this.searchQuery === null) return;
+            axios.get("/searchUsers?search=" + this.searchQuery)
+                .then(response => {
+                    console.log(response.data)
+                    if(response.data.length !== 0)
+                        this.events = response.data
+                    else
+                        alert("No results!")
+                })
+        },
+        searchTickets() {
+            axios.get("/searchTickets?search=" + this.searchQuery)
+                .then(response => {
+                    console.log(response.data)
+                    if(response.data.length !== 0)
+                        this.items = response.data
+                    else
+                        alert("No results!")
+                })
         }
     },
 
@@ -65,6 +90,12 @@ Vue.component("UserTickets", {
 
     template: `
     <div class="container">
+    <div class="input-group mb-3">
+  <input type="text" class="form-control" placeholder="Search..." aria-label="" aria-describedby="basic-addon2" v-model="searchQuery">
+  <div class="input-group-append">
+    <button class="btn btn-primary" type="button" @click="searchTickets">Search</button>
+  </div>
+    </div>
      <table class="table table-striped table-hover"
         id="table2"
      >
@@ -112,11 +143,11 @@ Vue.component("UserTickets", {
       <tr
         v-for="item in sortedItems"
         :key="item.id"
-        @click="selectRow(item.id)" :class="{'highlight': (item.id == selectedItem)}"
+        @click="selectRow(item.id)" :class="{'highlight': (item.id == this.selectedItem)}"
       >
         <td>{{ item.eventName }}</td>
         <td>{{ item.customerUsername }}</td>
-        <td>{{ item.eventDate }}</td>
+        <td>{{ parseDate(item.eventDate) }}</td>
         <td>{{ item.type }}</td>
         <td>{{ item.price }}</td>
         <td>{{ item.isReserved ? "RESERVED" : "DELETED" }}</td>

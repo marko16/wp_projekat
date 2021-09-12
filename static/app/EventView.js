@@ -56,6 +56,10 @@ Vue.component('EventView', {
                 })
         },
 
+        parseDate(date) {
+            return date.split("T").join(", ")
+        },
+
         calcPrice(coef) {
             console.log(this.amount)
             this.entirePrice = this.amount * this.event.regularPrice * coef;
@@ -124,7 +128,7 @@ Vue.component('EventView', {
                         <h5>Event type: {{event.eventType}}</h5> 
                     </div>
                     <h5 class="mb-2">Capacity: {{event.capacity}}, Available: {{event.availableTickets}}</h5>
-                    <h5 class="mb-2">Start date and time: {{event.startTime}}</h5>
+                    <h5 class="mb-2">Start date and time: {{parseDate(event.startTime)}}</h5>
                     <p>Status: {{isActive()}}</p>
                     <a type="button" @click="loadMap()" style="cursor: pointer; position: relative; right: 20px" data-toggle="modal" data-target="#map-modal">
                         <h5 class="address"><i class="fa fa-map-marker location-pin" aria-hidden="true"></i>{{parseLocation()}}</h5></a>

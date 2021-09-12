@@ -58,7 +58,10 @@ Vue.component("AdminEvents", {
                 if(response.data) alert("You have successfully deleted this event")
                 else alert("This event is already deleted")
             });
-        }
+        },
+        parseDate(date) {
+            return date.split("T").join(", ")
+        },
     },
 
     template: `
@@ -120,7 +123,7 @@ Vue.component("AdminEvents", {
       >
         <td>{{ item.name }}</td>
         <td>{{ item.eventType }}</td>
-        <td>{{ item.startTime }}</td>
+        <td>{{ parseDate(item.startTime) }}</td>
         <td>{{ item.location.street }} {{ item.location.number }}, {{ item.location.city }}</td>
         <td>{{ item.regularPrice }}</td>
         <td>4</td>

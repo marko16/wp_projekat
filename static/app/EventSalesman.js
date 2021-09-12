@@ -54,7 +54,10 @@ Vue.component("EventSalesman", {
         editEvent() {
             if(this.selectedItem !== -1)
             this.$router.push({path: "/editEvent/" + this.selectedItem, name: "editEvent", params: {id: this.selectedItem}})
-        }
+        },
+        parseDate(date) {
+            return date.split("T").join(", ")
+        },
     },
 
     template: `
@@ -104,7 +107,7 @@ Vue.component("EventSalesman", {
       >
         <td>{{ item.name }}</td>
         <td>{{ item.eventType }}</td>
-        <td>{{ item.startTime }}</td>
+        <td>{{ parseDate(item.startTime) }}</td>
         <td>{{ item.location.street }} {{ item.location.number }}, {{ item.location.city }}</td>
         <td>{{ item.regularPrice }}</td>
 
