@@ -4,7 +4,11 @@ Vue.component("EventListView", {
     data() {
         return {
             events: [],
+            types: [],
             searchQuery: null,
+            selectedType: null,
+            isSold: null,
+            all: []
         }
     },
 
@@ -14,26 +18,98 @@ Vue.component("EventListView", {
     // },
 
     mounted() {
-        axios.get("/events").then(
-            response => {
-                this.events = response.data;
-            })
+        this.loadAll();
     },
 
     methods: {
+        loadAll() {
+            axios.get("/events").then(
+                response => {
+                    this.events = response.data;
+                    this.all = response.data
+                    for(const e in response.data) {
+                        console.log(e)
+                        if(this.types.indexOf(this.events[e].eventType) === -1) {
+                            this.types.push(this.events[e].eventType)
+                        }
+                    }
+                })
+        },
         onSeeMore(event) {
             this.chosenEvent = event;
         },
         searchEvents() {
-            if(this.searchQuery === null) return;
+            if(this.searchQuery === null || this.searchQuery.trim() === "") {
+                this.loadAll()
+                return;
+            }
             axios.get("/searchEvents?search=" + this.searchQuery)
                 .then(response => {
-                    console.log(response.data)
-                    if(response.data.length !== 0)
+                    if(response.data.length !== 0) {
                         this.events = response.data
+                        this.all = response.data
+                    }
                     else
                         alert("No results!")
                 })
+        },
+        getFilter() {
+            const soldList = []
+            const typeList = []
+            let filteredArray = []
+            let noSold = false;
+            let noType = false;
+
+            if(this.isSold !== null) {
+                for(const e in this.all) {
+                    if(this.isSold) {
+                        if(this.all[e].availableTickets === 0) {
+                            soldList.push(this.all[e])
+                        }
+                    }
+                    if(!this.isSold) {
+
+                        if(this.all[e].availableTickets !== 0) {
+                            soldList.push(this.all[e])
+                        }
+                    }
+                }
+                if(soldList.length === 0) noSold = true;
+            }
+            if(this.selectedType !== null) {
+                for(const e in this.all) {
+
+                    if(this.all[e].eventType === this.selectedType) {
+                        console.log("sss")
+                        typeList.push(this.all[e])
+                    }
+                }
+                if(typeList.length === 0) noType = true;
+            }
+
+            if(typeList.length !== 0 && soldList.length !== 0) {
+                filteredArray = typeList.filter(value => soldList.includes(value));
+                console.log("usai")
+            } else if(noSold || noType) {
+                this.events = this.all
+                this.loadAll()
+                this.selectedType = "All"
+                this.isSold = false;
+                this.searchQuery = ""
+            } else{
+                if(typeList.length !== 0) filteredArray = typeList
+                else filteredArray = soldList
+            }
+
+            if(filteredArray.length === 0) {
+                this.events = this.all
+                alert("No events match this filter. All will be shown")
+                this.loadAll()
+                this.selectedType = "All"
+                this.isSold = false;
+                this.searchQuery = ""
+            } else
+            this.events = filteredArray
         }
     },
 
@@ -44,6 +120,17 @@ Vue.component("EventListView", {
   <div class="input-group-append">
     <button class="btn btn-primary" type="button" @click="searchEvents">Search</button>
   </div>
+    </div>
+  <div class="row">
+  <div class="col-5">
+  <select class="custom-select" @change="getFilter" v-model="selectedType">
+    <option value="All">All types</option>
+    <option v-for="type in types" :key="type" :value="type">{{type}}</option>
+  </select></div>
+  <div class="form-check form-switch col-5 mt-2">
+  <input class="form-check-input" type="checkbox" @change="getFilter" v-model="isSold" id="flexSwitchCheckDefault">
+  <label class="form-check-label" for="flexSwitchCheckDefault">Is sold</label>
+</div>
     </div>
     <div>
         <div v-for="e in events" :key="e.id">

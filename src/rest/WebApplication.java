@@ -139,7 +139,12 @@ public class WebApplication {
 
         get("/events", (req, res) -> gson.toJson(eventDAO.getAvailableEvents()));
 
-        get("/eventAdmin", (req, res) -> gson.toJson(eventDAO.loadAll().values()));
+        get("/eventAdmin", (req, res) -> gson.toJson(eventDAO.getAdminEvents()));
+
+        post("/activateEvent", (req, res) -> {
+            int id = Integer.parseInt(req.queryParams("event"));
+            return eventDAO.activate(id);
+        });
 
         get("/eventSalesman", (req, res) -> {
             String salesman = req.queryParams("salesman");
@@ -213,8 +218,7 @@ public class WebApplication {
             Event event = eventDAO.findOne(ticket.getEvent());
 
             Date date = new Date();
-            DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
-            String toDate = dateformat.format(date);
+            DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, +7);
             Date toDate1 = cal.getTime();
@@ -253,6 +257,7 @@ public class WebApplication {
 
             if(eventDAO.isLocationAvailable(event, location)) {
                 if (image != null) {
+                    System.out.println("hehe");
                     File outputFile = new File(System.getProperty("user.dir") + "\\static\\images" + posterName);
                     ImageIO.write(image, "png", outputFile);
                     event.setPoster("images/" + posterName);
@@ -292,16 +297,30 @@ public class WebApplication {
             Gson gsonReg = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
             Customer customer = gsonReg.fromJson(req.body(), Customer.class);
-            customerDAO.addCustomer(customer);
-            return true;
+            User user = customerDAO.loadAll().getOrDefault(customer.getUsername(), null);
+            user = adminDAO.loadAll().getOrDefault(customer.getUsername(), null);
+            user = salesmanDAO.loadAll().getOrDefault(customer.getUsername(), null);
+            if(user == null) {
+                customerDAO.addCustomer(customer);
+                return true;
+            }
+            else {
+                return false;
+            }
         });
 
         post("/registrationSalesman", (req, res) -> {
             Gson gsonReg = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
             Salesman salesman = gsonReg.fromJson(req.body(), Salesman.class);
-            salesmanDAO.addSalesman(salesman);
-            return true;
+            Salesman s = salesmanDAO.findOne(salesman.getUsername());
+            if(s == null) {
+                salesmanDAO.addSalesman(salesman);
+                return true;
+            }
+            else {
+                return false;
+            }
         });
 
         get("/getUser", (req, res) -> {
@@ -347,14 +366,14 @@ public class WebApplication {
         get("/searchTickets", (req, res) -> {
             String search = req.queryParams("search");
 
-            if(search.equals("null")) return null;
+            if(search.equals("null") || search.trim().isEmpty()) return null;
             return gson.toJson(ticketDAO.search(search));
         });
 
         get("/searchUsers", (req, res) -> {
             String search = req.queryParams("search");
 
-            if(search.equals("null")) return null;
+            if(search.equals("null") || search.trim().isEmpty()) return null;
 
             ArrayList<UserDTO> users = salesmanDAO.search(search);
             users.addAll(customerDAO.search(search));
@@ -373,8 +392,9 @@ public class WebApplication {
             event.setLocation(location);
             String poster = "";
             boolean posterChosen = true;
+            System.out.println(event.getPoster());
 
-            if(event.getPoster() == null) {
+            if(event.getPoster().equals("")) {
                 posterChosen = false;
                 event.setPoster("images/e1.jfif");
             }
@@ -389,11 +409,11 @@ public class WebApplication {
 
             if(eventDAO.isLocationAvailable(event, location)) {
                 if (posterChosen) {
-                    File outputFile = new File(System.getProperty("user.dir") + "\\static\\images" + posterName);
+                    File outputFile = new File(System.getProperty("user.dir") + "\\static\\images\\" + posterName);
                     ImageIO.write(image, "png", outputFile);
                     event.setPoster("images/" + posterName);
                 }
-                event.setActive(true);
+                event.setActive(false);
                 eventDAO.add(event);
             }
             else {

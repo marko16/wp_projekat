@@ -7,7 +7,10 @@ Vue.component("AdminUsers", {
                 selectedItem: -1
             },
             items: [],
-            searchQuery: null
+            searchQuery: null,
+            all: [],
+            selectedType: null,
+            selectedRole: null
         }
     },
 
@@ -16,14 +19,8 @@ Vue.component("AdminUsers", {
             $(this).addClass('highlight').siblings().removeClass('highlight');
         });
 
-        axios.get("/users")
-            .then(response => {
-                console.log(response.data)
-                if(response.data.length !== 0)
-                    this.items = response.data;
-                else
-                    alert("You have no tickets reserved for your events")
-            });
+
+        this.loadAll()
     },
 
     methods: {
@@ -37,12 +34,26 @@ Vue.component("AdminUsers", {
         selectRow(item){
             this.selectedItem = item;
         },
+        loadAll() {
+            axios.get("/users")
+                .then(response => {
+                    console.log(response.data)
+                    if(response.data.length !== 0) {
+                        this.items = response.data;
+                        this.all = response.data;
+                    }
+                    else
+                        alert("You have no tickets reserved for your events")
+                });
+        },
         blockUser() {
             console.log(this.selectedItem)
             axios.post("/block?username=" + this.selectedItem.username + "&role=" + this.selectedItem.role)
                 .then(response => {
-                    if(response.data)
+                    if(response.data) {
                         alert("You have successfully blocked this user")
+                        this.loadAll();
+                    }
                     else
                         alert("This user is already blocked")
                 })
@@ -52,7 +63,10 @@ Vue.component("AdminUsers", {
             axios.post("/unblock?username=" + this.selectedItem.username + "&role=" + this.selectedItem.role)
                 .then(response => {
                     if(response.data)
+                    {
                         alert("You have successfully unblocked this user")
+                        this.loadAll()
+                    }
                     else
                         alert("This user is already unblocked")
                 })
@@ -69,15 +83,77 @@ Vue.component("AdminUsers", {
             return String(role).charAt(0) + String(role).toString().slice(1).toLowerCase()
         },
         searchUsers() {
-            if(this.searchQuery === null) return;
+            if(this.searchQuery === null) {
+                this.loadAll();
+                return;
+            }
             axios.get("/searchUsers?search=" + this.searchQuery)
                 .then(response => {
                     console.log(response.data)
-                    if(response.data.length !== 0)
+                    if(response.data.length !== 0) {
+                        this.all = response.data
                         this.items = response.data
+                    }
                     else
                         alert("No results!")
                 })
+        },
+        getFilter() {
+            let roleList = []
+            let typeList = []
+            let filteredArray = []
+            let noType = false;
+            let noSold = false;
+
+            if(this.selectedRole !== null) {
+                if(this.selectedRole === "All") roleList = this.all
+                for(const e in this.all) {
+
+                    if(this.all[e].role.toLowerCase() === this.selectedRole.toLowerCase()) {
+                        roleList.push(this.all[e])
+                    }
+                }
+                if(roleList.length === 0) noType = true;
+            }
+
+            if(this.selectedType !== null) {
+                if(this.selectedType === "All") typeList = this.all
+                for(const e in this.all) {
+                    if(this.all[e].userType !== undefined) {
+                        if(this.all[e].userType.toLowerCase() === this.selectedType.toLowerCase()) {
+                            typeList.push(this.all[e])
+                        }
+                    }
+                }
+                if(typeList.length === 0) noType = true;
+            }
+
+            if(typeList.length !== 0 && roleList.length !== 0) {
+                filteredArray = typeList.filter(value => roleList.includes(value));
+                console.log("usai")
+            } else if(noType || noSold) {
+                this.items = this.all
+                this.selectedType = "All"
+                this.selectedRole = "All"
+                this.searchQuery = ""
+            }
+            else {
+                if(typeList.length !== 0) filteredArray = typeList
+                else {
+                    console.log(roleList)
+                    filteredArray = roleList
+                }
+            }
+
+            if(filteredArray.length === 0) {
+                this.items = this.all
+                alert("No events match this filter. All will be shown")
+                this.selectedType = "All"
+                this.selectedRole = "All"
+                this.searchQuery = ""
+            } else {
+                this.items = filteredArray
+            }
         }
     },
 
@@ -104,6 +180,27 @@ Vue.component("AdminUsers", {
     <button class="btn btn-primary" type="button" @click="searchUsers">Search</button>
   </div>
     </div>
+    <div class="row mb-5">
+  <div class="col-3">
+  <h6>User role: </h6>
+  <select class="custom-select" @change="getFilter" v-model="selectedRole">    
+    <option value="" disabled selected>Select user role...</option>
+    <option value="All">All roles</option>
+    <option value="Customer">Customer</option>
+    <option value="Salesman">Salesman</option>
+  </select></div>
+  <div class="col-3">
+    <h6>User type: </h6>
+  <select class="custom-select" @change="getFilter" v-model="selectedType">
+    <option value="" disabled selected>Select user type...</option>
+    <option value="All">All types</option>
+    <option value="Regular">Regular</option>
+    <option value="Bronze">Bronze</option>
+    <option value="Silver">Silver</option>
+    <option value="Gold">Gold</option>
+  </select></div>
+</div>
+  
      <table class="table sortable table-striped table-hover"
         id="table"
      >

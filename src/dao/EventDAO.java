@@ -19,7 +19,7 @@ public class EventDAO {
 
     public EventDAO() {
         events = new HashMap<>();
-        this.loadAll();
+        loadAll();
         try {
             locationDAO.loadAll();
         } catch (FileNotFoundException e) {
@@ -54,36 +54,36 @@ public class EventDAO {
             e.printStackTrace();
         }
 
-        Event e1 = new Event();
-        e1.setId(1);
-        e1.setActive(true);
-        e1.setCapacity(230);
-        e1.setAvailableTickets(33);
-        e1.setLocation(locationDAO.findOne(1));
-        e1.setRegularPrice(300);
-        e1.setName("Grad kulture");
-        e1.setStartTime(new Date(121, Calendar.SEPTEMBER, 22));
-        e1.setEventType("Cultural event");
-        e1.setPoster("images/e1.jfif");
-        e1.setSalesman("s5");
-        e1.setDeleted(false);
-
-        Event e2 = new Event();
-        e2.setId(2);
-        e2.setActive(true);
-        e2.setCapacity(210);
-        e2.setAvailableTickets(10);
-        e2.setLocation(locationDAO.findOne(2));
-        e2.setRegularPrice(250);
-        e2.setName("Koncert Rade Manojlovic");
-        e2.setStartTime(new Date(121, Calendar.SEPTEMBER, 15));
-        e2.setEventType("Concert");
-        e2.setPoster("images/e2.jfif");
-        e2.setSalesman("s5");
-        e2.setDeleted(false);
-
-        events.put(1, e1);
-        events.put(2, e2);
+//        Event e1 = new Event();
+//        e1.setId(1);
+//        e1.setActive(true);
+//        e1.setCapacity(230);
+//        e1.setAvailableTickets(0);
+//        e1.setLocation(locationDAO.findOne(1));
+//        e1.setRegularPrice(300);
+//        e1.setName("Grad kulture");
+//        e1.setStartTime(new Date(121, Calendar.SEPTEMBER, 22));
+//        e1.setEventType("Cultural event");
+//        e1.setPoster("images/e1.jfif");
+//        e1.setSalesman("s5");
+//        e1.setDeleted(false);
+//
+//        Event e2 = new Event();
+//        e2.setId(2);
+//        e2.setActive(true);
+//        e2.setCapacity(210);
+//        e2.setAvailableTickets(10);
+//        e2.setLocation(locationDAO.findOne(2));
+//        e2.setRegularPrice(250);
+//        e2.setName("Koncert Rade Manojlovic");
+//        e2.setStartTime(new Date(121, Calendar.SEPTEMBER, 15));
+//        e2.setEventType("Concert");
+//        e2.setPoster("images/e2.jfif");
+//        e2.setSalesman("s5");
+//        e2.setDeleted(false);
+//
+//        events.put(1, e1);
+//        events.put(2, e2);
 
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
         FileWriter fw = new FileWriter("files/events.json");
@@ -150,7 +150,7 @@ public class EventDAO {
     public ArrayList<Event> getAvailableEventsForSalesman(String salesman) {
         ArrayList<Event> availableEvents = new ArrayList<>();
         for(Event event : this.events.values()) {
-            if(event.getSalesman().equals(salesman)) {
+            if(event.getSalesman().equals(salesman) && event.isActive()) {
                 availableEvents.add(event);
             }
         }
@@ -180,5 +180,22 @@ public class EventDAO {
                     x.getLocation().getCity().toLowerCase().concat(x.getLocation().getStreet().toLowerCase())
                         .concat(x.getLocation().getNumber()).concat(String.valueOf(x.getLocation().getZipcode())).contains(finalSearch))
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public ArrayList<Event> getAdminEvents() {
+        return new ArrayList<>(events.values());
+    }
+
+    public boolean activate(int id) {
+        Event event = events.get(id);
+        if(event.isActive()) return false;
+
+        event.setActive(true);
+        try {
+            writeAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }

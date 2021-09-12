@@ -33,7 +33,12 @@ Vue.component("SalesmanRegister", {
                     gender : this.gender,
                     birthday : this.birthday
                 })
-                    .then(response => (	alert("You have successfully registered this salesman!")));
+                    .then(response => {
+                        if(response.data)
+                            alert("You have successfully registered this salesman!")
+                        else
+                            alert("That username already exists")
+                    });
             }
         }
     },
@@ -56,7 +61,7 @@ Vue.component("SalesmanRegister", {
                 id="username"
                 class="form-control"
                 name="username"
-                v-model="this.username"/>
+                v-model="username"/>
             </div>
             </div>
             <div class="form-group row">

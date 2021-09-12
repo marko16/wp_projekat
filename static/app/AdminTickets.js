@@ -17,19 +17,22 @@ Vue.component("AdminTickets", {
             $(this).addClass('highlight').siblings().removeClass('highlight');
         });
 
-        axios.get("/ticketsAdmin?admin=" + window.localStorage.getItem("username"))
-            .then(response => {
-                console.log(response.data)
-                if(response.data.length !== 0)
-                    this.items = response.data;
-                else
-                    alert("There is no tickets in the database!")
-            });
+        this.loadAll()
     },
 
     methods: {
         sortedClass (key) {
             return this.sort.key === key ? `sorted ${this.sort.isAsc ? 'asc' : 'desc' }` : '';
+        },
+        loadAll() {
+            axios.get("/ticketsAdmin?admin=" + window.localStorage.getItem("username"))
+                .then(response => {
+                    console.log(response.data)
+                    if(response.data.length !== 0)
+                        this.items = response.data;
+                    else
+                        alert("There is no tickets in the database!")
+                });
         },
         sortBy (key) {
             this.sort.isAsc = this.sort.key === key ? !this.sort.isAsc : false;
@@ -41,7 +44,10 @@ Vue.component("AdminTickets", {
         deleteTicket() {
             axios.post("/deleteTicket?ticket=" + this.selectedItem)
                 .then(response => {
-                    if(response.data) alert("You have deleted this ticket!")
+                    if(response.data) {
+                        alert("You have deleted this ticket!")
+                        this.loadAll()
+                    }
                     else alert("Ticket already deleted")
                 })
         },

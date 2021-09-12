@@ -135,6 +135,7 @@ public class CustomerDAO {
         customer.setCustomerType("REGULAR");
         customers.put(customer.getUsername(), customer);
 
+
         try {
             this.writeAll();
         } catch (IOException e) {

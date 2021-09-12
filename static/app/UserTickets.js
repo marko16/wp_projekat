@@ -8,7 +8,10 @@ Vue.component("UserTickets", {
                 selectedItem: null
             },
             items: [],
-            searchQuery: null
+            all: [],
+            searchQuery: null,
+            isReserved: null,
+            selectedType: null,
         }
     },
 
@@ -18,17 +21,22 @@ Vue.component("UserTickets", {
             console.log(this.selectedItem)
         });
 
-        axios.get("/ticketsUser?customer=" + window.localStorage.getItem("username"))
-            .then(response => {
-                console.log(response.data)
-                if(response.data.length !== 0)
-                    this.items = response.data;
-                else
-                    alert("You have no tickets reserved")
-            });
+        this.loadAll();
     },
 
     methods: {
+        loadAll() {
+            axios.get("/ticketsUser?customer=" + window.localStorage.getItem("username"))
+                .then(response => {
+                    console.log(response.data)
+                    if(response.data.length !== 0) {
+                        this.items = response.data;
+                        this.all = response.data
+                    }
+                    else
+                        alert("You have no tickets reserved")
+                });
+        },
         sortedClass (key) {
             return this.sort.key === key ? `sorted ${this.sort.isAsc ? 'asc' : 'desc' }` : '';
         },
@@ -45,13 +53,16 @@ Vue.component("UserTickets", {
             axios.post('/cancelReservation', {}, { params: { id: this.selectedItem }})
                 .then(response => {
                     alert(response.data)
+                    this.loadAll()
                 })
         },
         parseDate(date) {
             return date.split("T").join(", ")
         },
         searchUsers() {
-            if(this.searchQuery === null) return;
+            console.log("SADASd",this.searchQuery)
+            if(this.searchQuery !== null && this.searchQuery.trim() !== "") {
+            console.log("Sad")
             axios.get("/searchUsers?search=" + this.searchQuery)
                 .then(response => {
                     console.log(response.data)
@@ -60,16 +71,81 @@ Vue.component("UserTickets", {
                     else
                         alert("No results!")
                 })
+            }
         },
         searchTickets() {
+            if(this.searchQuery === null || this.searchQuery.trim() === "")
+            {
+                this.loadAll()
+                return;
+            }
             axios.get("/searchTickets?search=" + this.searchQuery)
                 .then(response => {
-                    console.log(response.data)
                     if(response.data.length !== 0)
                         this.items = response.data
                     else
                         alert("No results!")
                 })
+        },
+        getFilter() {
+            const soldList = []
+            const typeList = []
+            let filteredArray = []
+            let noType = false;
+            let noSold = false;
+
+            if(this.isReserved !== null) {
+                for(const e in this.all) {
+                    if(this.isReserved) {
+                        if(this.all[e].isReserved) {
+                            soldList.push(this.all[e])
+                        }
+                    }
+                    if(!this.isReserved) {
+                        if(!this.all[e].isReserved) {
+                            soldList.push(this.all[e])
+                        }
+                    }
+                }
+                if(soldList.length === 0) noSold = true
+            }
+
+            if(this.selectedType !== null) {
+                for(const e in this.all) {
+
+                    if(this.all[e].type.toLowerCase() === this.selectedType.toLowerCase()) {
+                        typeList.push(this.all[e])
+                    }
+                }
+                if(typeList.length === 0) noType = true;
+            }
+
+            if(typeList.length !== 0 && soldList.length !== 0) {
+                filteredArray = typeList.filter(value => soldList.includes(value));
+                console.log("usai")
+            } else if(noType || noSold) {
+                this.items = this.all
+                this.selectedType = "All"
+                this.isReserved = false;
+                this.searchQuery = ""
+            }
+                else {
+                if(typeList.length !== 0) filteredArray = typeList
+                else {
+                    console.log(soldList)
+                    filteredArray = soldList
+                }
+            }
+
+            if(filteredArray.length === 0) {
+                this.items = this.all
+                alert("No events match this filter. All will be shown")
+                this.selectedType = "All"
+                this.isReserved = false;
+                this.searchQuery = ""
+            } else {
+                this.items = filteredArray
+            }
         }
     },
 
@@ -95,6 +171,19 @@ Vue.component("UserTickets", {
   <div class="input-group-append">
     <button class="btn btn-primary" type="button" @click="searchTickets">Search</button>
   </div>
+    </div>
+    <div class="row">
+  <div class="col-5">
+  <select class="custom-select" @change="getFilter" v-model="selectedType">
+    <option value="All">All types</option>
+    <option value="Regular">Regular</option>
+    <option value="Fanpit">Fan pit</option>
+    <option value="VIP">VIP</option>
+  </select></div>
+  <div class="form-check form-switch col-5 mt-2 mb-5">
+  <input class="form-check-input" type="checkbox" @change="getFilter" v-model="isReserved" id="flexSwitchCheckDefault">
+  <label class="form-check-label" for="flexSwitchCheckDefault">Is reserved</label>
+</div>
     </div>
      <table class="table table-striped table-hover"
         id="table2"
@@ -123,7 +212,7 @@ Vue.component("UserTickets", {
           :class="sortedClass('type')"
           @click="sortBy('type')"
         >
-          Event Type
+          Ticket Type
         </th>
         <th
           :class="sortedClass('price')"

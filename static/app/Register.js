@@ -33,7 +33,12 @@ Vue.component("Register", {
                         gender : this.gender,
                         birthday : this.birthday
                     })
-                    .then(response => (	alert("You have successfully registered!")));
+                    .then(response => {
+                        if(response.data)
+                            alert("You have successfully registered!")
+                        else
+                            alert("That username already exists")
+                    });
             }
         }
     },

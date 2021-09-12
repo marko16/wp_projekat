@@ -22,14 +22,16 @@ Vue.component('AddEvent', {
             e.preventDefault()
             this.event.name = this.name
             this.event.capacity = parseInt(this.capacity)
-            this.event.regularPrice = parseFloat(this.regularPrice)
+            this.event.regularPrice = this.price
             this.event.startTime = this.startTime
             this.event.salesman = localStorage.getItem("username")
+            this.event.poster = this.poster
+            this.event.eventType = this.type
 
             await this.getLocation();
-            console.log(this.event)
             console.log(this.location)
             axios.post("/addEvent", {
+
                 event: this.event,
                 location: this.location
             })
@@ -52,6 +54,10 @@ Vue.component('AddEvent', {
 
         getLocation() {
             const address = `${this.street} ${this.number} ${this.city} ${this.zipcode}`
+            this.location.street = this.street
+            this.location.number = this.number
+            this.location.city = this.city
+            this.location.zipcode = parseInt(this.zipcode)
             axios.get("https://nominatim.openstreetmap.org/search.php?q=" + address + "&polygon_geojson=1&format=jsonv2")
                 .then(response => {
                     console.log(response.data)
@@ -60,10 +66,7 @@ Vue.component('AddEvent', {
                     } else {
                         this.location.latitude = parseFloat(response.data[0].lat);
                         this.location.longitude = parseFloat(response.data[0].lon);
-                        this.location.street = this.street
-                        this.location.number = this.number
-                        this.location.city = this.city
-                        this.location.zipcode = parseInt(this.zipcode)
+
                     }
                 });
         },
