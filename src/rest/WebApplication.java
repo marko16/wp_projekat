@@ -35,12 +35,13 @@ public class WebApplication {
     private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
     private static UserController uc = new UserController();
 
+    private static LocationDAO locationDAO = new LocationDAO();
     private static CustomerDAO customerDAO = new CustomerDAO();
     private static SalesmanDAO salesmanDAO = new SalesmanDAO();
     private static AdminDAO adminDAO = new AdminDAO();
-    private static LocationDAO locationDAO = new LocationDAO();
     private static EventDAO eventDAO = new EventDAO();
     private static TicketDAO ticketDAO = new TicketDAO();
+    private static CommentDAO commentDAO = new CommentDAO();
 
     public static void main(String[] args) throws Exception {
         port(8080);
@@ -281,16 +282,35 @@ public class WebApplication {
             String ticketType = req.queryParams("ticketType");
 
             Customer customer = customerDAO.findOne(username);
+            if(customer == null) return -2;
             Event event = eventDAO.findOne(Integer.parseInt(eventId));
 
             if(event.getAvailableTickets() < Integer.parseInt(amount)) {
-                return false;
+                return -1;
             }
 
             ArrayList<String> tickets = ticketDAO.createOrder(username, eventId, amount, ticketType, event.getRegularPrice());
             customerDAO.addPoints(tickets, ticketType, amount, event.getRegularPrice(), username);
             eventDAO.adjustCapacity(Integer.parseInt(amount), event.getId());
+            return 0;
+        });
+
+        post("/postComment", (req, res) -> {
+            String eventId = req.queryParams("eventId");
+            String username = req.queryParams("username");
+            String text = req.queryParams("text");
+            String rating = req.queryParams("rating");
+
+
+            System.out.println(username);
+            commentDAO.create(username, text, eventId, rating);
             return true;
+        });
+
+        get("/eventComments", (req, res) -> {
+            String id = req.queryParams("id");
+            int id2 = Integer.parseInt(id);
+            return commentDAO.getCommentsForEvent(id2);
         });
 
         post("/registration", (req, res) -> {

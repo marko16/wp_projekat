@@ -22,17 +22,19 @@ public class CustomerDAO {
         customerTypes = new HashMap<>();
 
         try {
+            writeAll();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
             loadAll();
             loadTypes();
         } catch (IOException e) {
             e.printStackTrace();
         }
         
-        try {
-            writeAll();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
     private void loadTypes() throws FileNotFoundException {
@@ -106,9 +108,11 @@ public class CustomerDAO {
             points = (int) (((Integer.parseInt(amount) * regularPrice) / 1000) * 133 * 4 * 2);
         } else {
             points = (int) (((Integer.parseInt(amount) * regularPrice) / 1000) * 133 * 4 * 4);
+            System.out.println("ajde" + points);
+
         }
 
-        Customer c = this.findOne(username);
+        Customer c = customers.get(username);
 //        c.getTickets().addAll(tickets);
 
         c.setPoints(c.getPoints() + points);

@@ -10,7 +10,9 @@ Vue.component('EventView', {
             amount: 1,
             coef: 1,
             entirePrice: 0,
-            ticketType: ""
+            ticketType: "",
+            comment: null,
+            rate: -1,
         }
     },
 
@@ -49,10 +51,12 @@ Vue.component('EventView', {
 
             axios.post("/reserve", {}, { params: { username: "c1", eventId: this.id, ticketType: this.ticketType, amount: this.amount}})
                 .then(response => {
-                    if(response.data)
+                    if(response.data === 0)
                         alert("Tickets purchased successfully!")
-                    else
+                    else if(response.data === -1)
                         alert("Not enough available tickets!")
+                    else
+                        alert("You are not a customer!")
                 })
         },
 
@@ -66,6 +70,15 @@ Vue.component('EventView', {
             if(coef === 1) this.ticketType = "REGULAR"
             else if(coef === 2) this.ticketType = "FANPIT"
             else this.ticketType = "VIP"
+        },
+
+        postComment() {
+            console.log(this.comment)
+            const username = window.localStorage.getItem("username")
+            axios.post("/postComment?username=" + username + "&eventId=" + this.id + "&text=" + this.comment + "&rating=" + this.rate)
+                .then(response => {
+                    if(response.data) alert("You have commented on this event!")
+                })
         },
 
         loadMap() {
@@ -107,20 +120,43 @@ Vue.component('EventView', {
             <div class="row gx-4 gx-lg-5 align-items-center">
                 <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" :src="event.poster" alt="..." /></div>
                 <div class="col-md-6">
+                <div class="row mt-4 ml-1">
                     <div class="small mb-1 average-rating">Average event rating: 3.6</div>
-                    <div class="col rate">
-                          <input type="radio" id="star52" name="rate" value="5"/>
+                    <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal1">Leave a comment...</button></div>
+<div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Write a comment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       
+        <textarea placeholder="Your text here..." class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="comment"></textarea>
+      <div class="col rate mr-5" style="margin-right: 1000px">
+                          <input type="radio" id="star52" name="rate" value="5" v-model="rate"/>
                           <label for="star52" title="text"></label>
-                          <input type="radio" id="star42" name="rate" value="4"/>
+                          <input type="radio" id="star42" name="rate" value="4" v-model="rate"/>
                           <label for="star42" title="text"></label>
-                          <input type="radio" id="star32" name="rate" value="3"/>
+                          <input type="radio" id="star32" name="rate" value="3" v-model="rate"/>
                           <label for="star32" title="text"></label>
-                          <input type="radio" id="star22" name="rate" value="2"/>
+                          <input type="radio" id="star22" name="rate" value="2" v-model="rate"/>
                           <label for="star22" title="text"></label>
-                          <input type="radio" id="star12" name="rate" value="1"/>
+                          <input type="radio" id="star12" name="rate" value="1" v-model="rate"/>
                           <label for="star12" title="text"></label> 
                     </div>
-                    <h1 class="display-5 fw-bolder">{{event.name}}</h1>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" @click="postComment">Comment</button>
+      </div>
+    </div>
+  </div>
+</div>
+                
+                    <h1 class="display-5 fw-bolder mt-4">{{event.name}}</h1>
                     <div class="fs-3 mb-3">
                         <span class="text-decoration-line-through">Ordinary card price: {{event.regularPrice}}</span>
                     </div>
@@ -141,6 +177,7 @@ Vue.component('EventView', {
                     </div>
                 </div>
             </div>
+            
         </div>
         
         
@@ -193,6 +230,9 @@ Vue.component('EventView', {
 </div>
     
     </div>
+    
+    
+
     </div>
     `
 });

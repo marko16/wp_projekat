@@ -5,10 +5,9 @@ public class Comment {
     private String customer;
     private int event;
     private String text;
-    private short rating;
+    private int rating;
     private int approved;
     private boolean deleted;
-    private String buyer;
 
     public int getId() {
         return id;
@@ -32,14 +31,6 @@ public class Comment {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public String getBuyer() {
-        return buyer;
-    }
-
-    public void setBuyer(String buyer) {
-        this.buyer = buyer;
     }
 
     public String getCustomer() {
@@ -66,11 +57,11 @@ public class Comment {
         this.text = text;
     }
 
-    public short getRating() {
+    public int getRating() {
         return rating;
     }
 
-    public void setRating(short rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 }

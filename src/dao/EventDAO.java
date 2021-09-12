@@ -48,42 +48,54 @@ public class EventDAO {
     }
 
     private void writeAll() throws IOException {
-        try {
-            locationDAO.loadAll();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        events = new HashMap<>();
 
-//        Event e1 = new Event();
-//        e1.setId(1);
-//        e1.setActive(true);
-//        e1.setCapacity(230);
-//        e1.setAvailableTickets(0);
-//        e1.setLocation(locationDAO.findOne(1));
-//        e1.setRegularPrice(300);
-//        e1.setName("Grad kulture");
-//        e1.setStartTime(new Date(121, Calendar.SEPTEMBER, 22));
-//        e1.setEventType("Cultural event");
-//        e1.setPoster("images/e1.jfif");
-//        e1.setSalesman("s5");
-//        e1.setDeleted(false);
-//
-//        Event e2 = new Event();
-//        e2.setId(2);
-//        e2.setActive(true);
-//        e2.setCapacity(210);
-//        e2.setAvailableTickets(10);
-//        e2.setLocation(locationDAO.findOne(2));
-//        e2.setRegularPrice(250);
-//        e2.setName("Koncert Rade Manojlovic");
-//        e2.setStartTime(new Date(121, Calendar.SEPTEMBER, 15));
-//        e2.setEventType("Concert");
-//        e2.setPoster("images/e2.jfif");
-//        e2.setSalesman("s5");
-//        e2.setDeleted(false);
-//
-//        events.put(1, e1);
-//        events.put(2, e2);
+
+        Event e1 = new Event();
+        e1.setId(1);
+        e1.setActive(true);
+        e1.setCapacity(230);
+        e1.setAvailableTickets(0);
+        e1.setLocation(locationDAO.findOne(1));
+        e1.setRegularPrice(300);
+        e1.setName("Grad kulture");
+        e1.setStartTime(new Date(121, Calendar.SEPTEMBER, 22));
+        e1.setEventType("Cultural event");
+        e1.setPoster("images/e1.jfif");
+        e1.setSalesman("s5");
+        e1.setDeleted(false);
+
+        Event e2 = new Event();
+        e2.setId(2);
+        e2.setActive(true);
+        e2.setCapacity(210);
+        e2.setAvailableTickets(10);
+        e2.setLocation(locationDAO.findOne(2));
+        e2.setRegularPrice(250);
+        e2.setName("Koncert Rade Manojlovic");
+        e2.setStartTime(new Date(121, Calendar.SEPTEMBER, 15));
+        e2.setEventType("Concert");
+        e2.setPoster("images/e2.jfif");
+        e2.setSalesman("s5");
+        e2.setDeleted(false);
+
+        Event e3 = new Event();
+        e3.setId(3);
+        e3.setActive(true);
+        e3.setCapacity(100);
+        e3.setAvailableTickets(50);
+        e3.setLocation(locationDAO.findOne(3));
+        e3.setRegularPrice(400);
+        e3.setName("Manifestacija u Novom Sadu");
+        e3.setStartTime(new Date(121, Calendar.SEPTEMBER, 19));
+        e3.setEventType("Concert");
+        e3.setPoster("images/e3.png");
+        e3.setSalesman("s5");
+        e3.setDeleted(false);
+
+        events.put(1, e1);
+        events.put(2, e2);
+        events.put(3, e3);
 
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
         FileWriter fw = new FileWriter("files/events.json");

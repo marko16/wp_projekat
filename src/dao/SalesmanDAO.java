@@ -34,27 +34,6 @@ public class SalesmanDAO {
     }
 
     private void writeAll() throws IOException {
-        Salesman s1 = new Salesman();
-        s1.setUsername("s1");
-        s1.setFirstName("Ivana");
-        s1.setLastName("Manojlovic");
-        s1.setPassword("123");
-        s1.setBlocked(false);
-        s1.setGender(Gender.FEMALE);
-        s1.setBirthday(new Date(1978, Calendar.JUNE, 22));
-
-        Salesman s2 = new Salesman();
-        s2.setUsername("s2");
-        s2.setFirstName("Mira");
-        s2.setLastName("Miric");
-        s2.setPassword("123");
-        s2.setBlocked(false);
-        s2.setGender(Gender.FEMALE);
-        s2.setBirthday(new Date(1976, Calendar.JUNE, 22));
-
-        salesmen.put("s1", s1);
-        salesmen.put("s2", s2);
-
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
         FileWriter fw = new FileWriter("files/salesmen.json");
         gson.toJson(this.salesmen, fw);

@@ -60,12 +60,10 @@ Vue.component("UserTickets", {
             return date.split("T").join(", ")
         },
         searchUsers() {
-            console.log("SADASd",this.searchQuery)
             if(this.searchQuery !== null && this.searchQuery.trim() !== "") {
             console.log("Sad")
             axios.get("/searchUsers?search=" + this.searchQuery)
                 .then(response => {
-                    console.log(response.data)
                     if(response.data.length !== 0)
                         this.events = response.data
                     else
@@ -112,7 +110,7 @@ Vue.component("UserTickets", {
 
             if(this.selectedType !== null) {
                 for(const e in this.all) {
-
+                    console.log(this.all[e].type)
                     if(this.all[e].type.toLowerCase() === this.selectedType.toLowerCase()) {
                         typeList.push(this.all[e])
                     }
@@ -122,7 +120,6 @@ Vue.component("UserTickets", {
 
             if(typeList.length !== 0 && soldList.length !== 0) {
                 filteredArray = typeList.filter(value => soldList.includes(value));
-                console.log("usai")
             } else if(noType || noSold) {
                 this.items = this.all
                 this.selectedType = "All"

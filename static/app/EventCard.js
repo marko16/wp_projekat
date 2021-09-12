@@ -33,10 +33,12 @@ Vue.component("EventCard", {
 
             axios.post("/reserve", {}, { params: { username: "c1", eventId: this.event.id, ticketType: this.ticketType, amount: this.amount}})
                 .then(response => {
-                    if(response.data)
+                    if(response.data === 0)
                         alert("Tickets purchased successfully!")
-                    else
+                    else if(response.data === -1)
                         alert("Not enough available tickets!")
+                    else
+                        alert("Yoou are not a customer!")
                 })
         },
         parseLocation() {
